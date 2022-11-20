@@ -78,9 +78,8 @@ conversation "hai reveal free worlds news"
 	branch "hai knowledge"
 		has "First Contact: Hai: offered"
 	`	They show a short video featuring alien ships, not Pug, or Quarg, but something else. They are engaged in combat with each other, and fire weapons quite unlike anything produced in human space.`
-	`	You raise your eyebrows. Actual footage of an unknown alien conflict doesn't seem likely.`
 	`	When the clip ends, Campbell is encouraged by Camembert to talk about where he got the footage. Campbell is well presented, although his suit is definitely rented - you couldn't imagine how a crewman would be able to afford a suit like that on their salary - and he's clearly anxious. You can make out the beads of sweat on his brow as he considers his answer, and his neat suit is slightly crumpled in the way that happens when people wipe sweat off their palms a lot. When Campbell speaks, it is with a paranoid manner that is plain to see even through a screen. He talks at length about an ongoing conflict that threatens to spill over and drag all of humanity back to war; a war waged by an alien species known as the 'Hai'.`
-	`	The idea that there's a directly accessible alien race, at war, that has also somehow been kept a secret, may just be a ridiculous rumor. Nevertheless, it is intriguing... You listen in to collect the relevant details for future reference.`
+	`	The idea that there's a directly accessible alien race, at war, that has also somehow been kept a secret, may just be a rumor. Nevertheless, it is intriguing... You listen in to collect the relevant details for future reference.`
 	`	It's difficult to be sure where you should start looking, but it seems that these 'Hai' are meant to be northward, and the biggest hub at that end of the known galaxy is Sunracer.`
 		accept
 	label "hai knowledge"
@@ -94,14 +93,12 @@ conversation "hai reveal republic or syndicate news"
 	`You are relaxing at the spaceport while your ship refuels, when a breaking news broadcast comes on; it's not urgent enough to actually interrupt scheduled content, but urgent enough to fill the first ad break.`
 	`	The severe-looking anchorwoman bores down the camera with an expression that demands attention.`
 	`	"An ex-crewman employed by an itinerant trader has come forward to media in the Free Worlds about hostile aliens just beyond our borders. He claims to have brought video proof of an ongoing conflict that threatens to spill over and drag all of humanity back to war. Stay tuned for our full segment at six."`
-	`	You raise your eyebrows. Actual footage of an unknown alien conflict doesn't seem likely.`
-	`	That such news should come out so soon after the Pug smacks of a hoax. A quick glance at the clock shows you only have ten minutes to wait, so you stick around for the full segment out of curiosity.` 
 	`	The news returns with the severe anchorwoman. It turns out that the crewman in question had been picked up by a minor media outlet on Tarazed. He had apparently traveled many weeks before deciding to seek the media in order to avoid being shut down by Republic Intelligence if he contacted them elsewhere. The man is fairly young, and appears very well presented, though he has a bit of the paranoid about him that is plain to see even through a screen.`
 	branch "hai knowledge"
 		has "First Contact: Hai: offered"
 	`	They show a short video featuring alien ships, not Pug, or Quarg, but something else. They are engaged in combat with each other, and fire weapons quite unlike anything produced in human space.`
 	`	It is only after this that the anchorwoman reveals that, while this was initially treated as a hoax, one of their own reporters posed a timely question to a well-respected trader, resulting in quite the stir when he slipped up and confirmed the existence of the aliens known as 'Hai'.`
-	`	The idea that there's a directly accessible alien race, at war, that has also somehow been kept a secret, may just be a ridiculous rumor. Nevertheless, it is intriguing... You listen in to collect the relevant details for future reference.`
+	`	The idea that there's a directly accessible alien race, at war, that has also somehow been kept a secret, may just be a rumor. Nevertheless, it is intriguing... You listen in to collect the relevant details for future reference.`
 	`	It's difficult to be sure where you should start looking, but it seems that these 'Hai' are meant to be northward, and the biggest hub at that end of the known galaxy is Sunracer.` 
 		accept	
 	label "hai knowledge"
