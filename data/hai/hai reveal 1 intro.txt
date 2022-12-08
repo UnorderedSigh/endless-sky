@@ -70,24 +70,85 @@ event "hai secret leaks"
 
 
 conversation "hai reveal free worlds news"
-	`You are relaxing within the spaceport while your ship refuels after conducting a spot of business. On the view-screen is some talk show that you haven't previously encountered, but apparently seems to be quite a popular one out of Tarazed.`
-	`	A young and fresh-faced man who looks incredibly ill at ease has just been brought out as a surprise guest by the host Jonathon Camembert.`
-	`	"So now in our surprise segment, let me introduce you to Ronald Campbell. He once crewed on one of these big trade ships, but after seeing what he saw, he just had to come forward!"`
-	`	The host stresses the word 'had' so much his voice squeaks, but the audience's attention has certainly been gained.`
-	`	"But first, let's take a look at a clip."`
-	branch "hai knowledge"
-		has "First Contact: Hai: offered"
-	`	They show a short video featuring alien ships, not Pug, or Quarg, but something else. They are engaged in combat with each other, and fire weapons quite unlike anything produced in human space.`
-	`	You raise your eyebrows. Actual footage of an unknown alien conflict doesn't seem likely.`
-	`	When the clip ends, Campbell is encouraged by Camembert to talk about where he got the footage. Campbell is well presented, although his suit is definitely rented - you couldn't imagine how a crewman would be able to afford a suit like that on their salary - and he's clearly anxious. You can make out the beads of sweat on his brow as he considers his answer, and his neat suit is slightly crumpled in the way that happens when people wipe sweat off their palms a lot. When Campbell speaks, it is with a paranoid manner that is plain to see even through a screen. He talks at length about an ongoing conflict that threatens to spill over and drag all of humanity back to war; a war waged by an alien species known as the 'Hai'.`
-	`	The idea that there's a directly accessible alien race, at war, that has also somehow been kept a secret, may just be a ridiculous rumor. Nevertheless, it is intriguing... You listen in to collect the relevant details for future reference.`
-	`	It's difficult to be sure where you should start looking, but it seems that these 'Hai' are meant to be northward, and the biggest hub at that end of the known galaxy is Sunracer.`
-		accept
-	label "hai knowledge"
-	`	They show a short video of alien ships, Hai ships, engaged in combat with each other.`
-	`	When the clip ends, Campbell is encouraged by Camembert to talk about where he got the footage. Campbell is well presented, although his suit is definitely rented - you couldn't imagine how a crewman would be able to afford a suit like that on their salary - and he's clearly anxious about what he's exposed. You can make out the beads of sweat on his brow as he considers his answer, and his neat suit crumples slightly. When Campbell speaks, it is with a paranoid manner that is plain to see even through a screen. He talks at length about an ongoing conflict that threatens to spill over and drag all of humanity back to war; a war waged by an alien species known as the 'Hai'.`
+	`You are relaxing in a cafe while your ship refuels, and a pair of middle-aged captains come to your table. One is Navy, the other is Free Worlds, and they're obviously sisters.`
+	`	"Captain Rain, R.N.S. Camuy," says one. "How's the <ship>, Captain <last>?"`
+	`	"Captain Faina, F.S. Baobab," says her sister. "We both saw you in battle. You're the war's most accomplished mercenary."`
+	`	"We have a video to show you," says Rain.`
+	label questions
+	choice
+		`	"What is the Navy doing in Free Worlds space?"`
+			goto navy
+			to display
+				not "hai reveal free worlds news: label navy"
+		`	"Did you fight on the other side of the war from your sister?"`
+			goto sister
+			to display
+				not "hai reveal free worlds news: label sister"
+		`	"Mercenary? I'm not a mercenary."`
+			goto mercenary
+			to display
+				not "hai reveal free worlds news: label mercenary"
+		`	"What video?"`
+			goto video
+		`	"Can I help you?"`
+			goto help
+			to display
+				has "hai reveal free worlds news: label navy"
+		`	"Good to meet you. The <ship> is fine, but I've got to get back there now."`
+			goto leave
+	label navy
+	action
+		set "hai reveal free worlds news: label navy"
+	`	"Joint police operation," says Captain Rain. "It's more common than you may think."`
+	`	Captain Faina nods. "We're shutting down a galactic Spider Funk smuggling operation. It's an illegal hallucinogenic. Not addictive, but still dangerous. The organization running it is huge, well funded, and well armed."`
+	`	"Not a match for a Dreadnought and an Auxiliary, though," brags Rain.`
+		goto questions
+	label sister
+	action
+		set "hai reveal free worlds news: label sister"
+	`	"Yup," Faina says. "I blew up her Cruiser! When her ship's escape pods were veering towards a star, we rescued them."`
+	`	Rain continues. "Can you imagine my surprise when I woke up on my sister's new Dreadnought?"`
+	`	"Hey, you got a new Auxiliary commission afterwards," replies Fiona. "Now we escort each other's ships during investigations."`
+		goto questions
+	label mercenary
+	action
+		set "hai reveal free worlds news: label mercenary"
+	`	"I meant no offense," says Fiona. "You're quite the hero." She thinks for a second and looks at her sister. "Rain, can you explain?"`
+	`	Rain says, "We're uniformed career officers who must follow orders. Our country owns the ships, uniforms, and everything else we use. Our salaries may be meager compared to your earnings, but serving one's country is a rich reward.`
+	`	"You, on the other hand, own your ship and serve whoever you want. To keep up with costs, you have to charge a lot of money for your services. Mercenaries only survive as long as you if they're skilled at both finances and combat."`
+		goto questions
+	label leave
+	`	"Actually, before you go," says Fiona, "we're hoping you can tell us what these ships are."`
+		goto video
+	label help
+	`	"No," says Fiona. "We were just wondering if you know what these ships are."`
+	label video
+	`	The women show you a short video featuring alien ships, not Pug, or Quarg, but something else. The ships are engaged in combat with each other, and fire weapons quite unlike anything produced in human space. There's occasional human ships flying through, but they rarely live long. The video's crude voice-over claims the ships are owned by the "Hai."`
+		to display
+			not "First Contact: Hai: offered"
+			not "First Contact: Unfettered: offered"
+	`	The women show you a short video featuring ships that look distinctly Hai. The ships are engaged in combat with each other, and fire weapons quite unlike anything produced in human space. There's occasional human ships flying through, but they rarely live long.`
+		to display
+			or
+				has "First Contact: Hai: offered"
+				has "First Contact: Unfettered: offered"
+	`	"It's a viral video that came out of Sunracer," says Rain. "We don't know if the video is legitimate, but it does look real. A lot of news commentators are picking it up. They're terrified that another war is about to start."`
+	`	Fiona adds, "Neither of us could get an intelligence report on the ships, though, so that places it in some doubt." Rain nods in agreement.`
+	label answers
+	choice
+		`	"I've never seen those ships before."`
+		`	"Sorry, I can't talk about that."`
+		`	"I'll look into it."`
+	`	"I'll keep wondering then," says Fiona. "It is an honor to meet you, Captain <last>."`
+	`	"Indeed it is," says Rain. "A living legend."`
 	`	It might be time to go visit your Hai friends again.`
 		accept
+		to display
+			has "First Contact: Hai: offered"
+	`	You make a mental note to visit Sunracer and investigate these strange new "Hai" ships. It would be best to prevent another war while diplomacy is still an option.`
+		accept
+		to display
+			not "First Contact: Hai: offered"
 
 
 conversation "hai reveal republic or syndicate news"
