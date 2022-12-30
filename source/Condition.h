@@ -25,36 +25,36 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 
 // This class stores either:
-//   1. A condition's value and key
-//   2. A literal value (key is empty)
+//   1. A condition's value and name
+//   2. A literal value (name is empty)
 //
 // The ValueType (V in the template) is first in the template since
-// (nearly?)  all Condition classes will use a std::string key (K). It
+// (nearly?)  all Condition classes will use a std::string name (K). It
 // should be an arithmetic type, like double, int64_t, int, or
 // unsigned. A bool should work too, but that's untested.
 //
-// The KeyType (K in the template) is a template parameter so we can
+// The NameType (K in the template) is a template parameter so we can
 // allow storage of scope, wstring, etc. in the future without
 // rewriting this class.
 //
-// Condition assumes its KeyType has an empty() function, and that the
-// default constructor produces an empty() KeyType. Also, the Getter
-// must have a HasGet method that receives the KeyType. An std::string
+// Condition assumes its NameType has an empty() function, and that the
+// default constructor produces an empty() NameType. Also, the Getter
+// must have a HasGet method that receives the NameType. An std::string
 // satisfies all of these requirements, and it is the default.
 
 template < class V >
 class Condition {
 public:
 	using ValueType = V;
-	using KeyType = std::string;
+	using NameType = std::string;
 
 	static_assert(std::is_arithmetic<ValueType>::value, "Condition value type must be arithmetic.");
-	static_assert(std::is_class<KeyType>::value, "Condition key type must be a class.");
-	static_assert(&KeyType::empty, "Condition key must have an empty function.");
+	static_assert(std::is_class<NameType>::value, "Condition name type must be a class.");
+	static_assert(&NameType::empty, "Condition name must have an empty function.");
 
-	constexpr Condition() : value(), key() {}
-	explicit constexpr Condition(const V &value) : value(value), key() {}
-	constexpr Condition(const V &value, const KeyType &key) : value(value), key(key) {}
+	constexpr Condition() : value(), name() {}
+	explicit constexpr Condition(const V &value) : value(value), name() {}
+	constexpr Condition(const V &value, const NameType &name) : value(value), name(name) {}
 
 	template <class V2>
 	Condition(const Condition<V2> &other);
@@ -76,22 +76,17 @@ public:
 
 	// Accessors and mutators
 
-	const ValueType &Value() const { return value; }
-	ValueType &Value() { return value; }
-	const KeyType &Key() const { return key; }
-	KeyType &Key() { return key; }
+	ValueType Value() const { return store ? GetFromStore() : value; }
+	const NameType &Name() const { return name; }
 
 	// Does this Condition come from the same place as the other one?
-	// If it was a condition, the key must be the same (value doesn't matter)
-	// If it was a literal (no key) then the value must be the same.
+	// If it was a condition, the name must be the same (value doesn't matter)
+	// If it was a literal (no name) then the value must be the same.
 	// If one is literal and the other is conditional, the result is false.
 	bool SameOrigin(const Condition &o);
 
 	// Does this originate from a condition?
-	bool HasConditions() const { return !key.empty(); }
-
-	// Does this originate from a literal value (ie. 5.071)?
-	bool IsLiteral() const { return key.empty(); }
+	bool HasConditions() const { return store; }
 
 	// Floating-point values are false if they're within half the
 	// type's precision of 0 while any other types are passed
@@ -104,8 +99,17 @@ public:
 
 
 private:
+	ValueType GetFromStore() const;
+	ValueType SetInStore(ValueType v) const;
+	std::shared_ptr<ConditionsStore::ConditionElement> ElementFromStore();
+
+
+private:
 	ValueType value;
-	KeyType key;
+	NameType name;
+
+	mutable std::shared_ptr<ConditionsStore> store;
+	mutable std::weak_ptr<ConditionsStore::ConditionElement> element;
 };
 
 
@@ -115,7 +119,7 @@ template <class V>
 template <class V2>
 Condition<V>::Condition(const Condition<V2> &other):
 	value(static_cast<ValueType>(other.Value())),
-	key(static_cast<KeyType>(other.Key()))
+	name(static_cast<NameType>(other.Name()))
 {
 }
 
@@ -127,7 +131,7 @@ template <class V2>
 Condition<V> &Condition<V>::operator=(const Condition<V2> &other)
 {
 	value = static_cast<ValueType>(other.Value());
-	key = other.Key();
+	name = other.Name();
 	return *this;
 }
 
@@ -140,8 +144,8 @@ const V &Condition<V>::UpdateConditions(const Getter &getter)
 	// If this was a literal, there is nothing to update.
 	if(HasConditions())
 	{
-		auto got = getter.HasGet(key);
-		// Assumes: got.first = true iff getter has key
+		auto got = getter.HasGet(name);
+		// Assumes: got.first = true iff getter has name
 		// got.second = value iff got.first
 		if(got.first)
 			value = static_cast<ValueType>(got.second);
@@ -158,8 +162,8 @@ const V &Condition<V>::UpdateConditions(const Getter &getter, Validator validato
 	// If this was a literal, there is nothing to update.
 	if(HasConditions())
 	{
-		auto got = getter.HasGet(key);
-		// Assumes: got.first = true iff getter has key
+		auto got = getter.HasGet(name);
+		// Assumes: got.first = true iff getter has name
 		// got.second = value iff got.first
 		if(got.first && validator(got.second))
 		{
@@ -177,7 +181,7 @@ template <class V>
 bool Condition<V>::SameOrigin(const Condition<V> &o)
 {
 	if(HasConditions())
-		return key == o.Key();
+		return name == o.Name();
 	else if(o.HasConditions())
 		return false;
 	else
@@ -208,5 +212,61 @@ template <class V>
 Condition<V>::operator bool() const {
 	return NotNearZero(value);
 }
+
+
+template <class V>
+V Condition<V>::GetFromStore() const {
+	auto it = GetEntryFromStore();
+	if(!it)
+		return V();
+	else if(!it->provider)
+		return ArithmeticCast<V>(it->value);
+	else
+		return ArithmeticCast<V>(it->provider->getFunction(name));
+}
+
+
+
+template <class V>
+V Condition<V>::SetInStore(V old) const
+{
+	ConditionsStore::ValueType storeValue = ArithmeticCast<V>(old);
+	auto it = EnsureEntryInStore();
+	*it = storeValue;
+	return ArithmeticCast<T>(storeValue);
+}
+
+
+template <class V>
+std::shared_ptr<ConditionsStore::ConditionElement> GetEntryFromStore()
+{
+	try
+	{
+		return shared_ptr(entry);
+	}
+	catch(const bad_weak_ptr &bwp)
+	{
+		auto ptr = store.GetEntry(name);
+		entry = ptr;
+		return ptr;
+	}
+}
+
+
+template <class V>
+std::shared_ptr<ConditionsStore::ConditionElement> EnsureEntryInStore()
+{
+	try
+	{
+		return shared_ptr(entry);
+	}
+	catch(const bad_weak_ptr &bwp)
+	{
+		auto ptr = store.EnsureEntry(name);
+		entry = ptr;
+		return ptr;
+	}
+}
+
 
 #endif

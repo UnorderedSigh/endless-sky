@@ -38,6 +38,9 @@ class DataWriter;
 // data types than int64_t (for example double, float or even complex
 // formulae).
 class ConditionsStore {
+	template <class T>
+	friend class Condition;
+
 public:
 	using ValueType = int64_t;
 	using KeyType = std::string;
@@ -51,6 +54,8 @@ public:
 	class DerivedProvider {
 		friend ConditionsStore;
 		friend ConditionEntry;
+		template <class T>
+		class Condition;
 
 	public:
 		// Functions to set the lambda functions for accessing the conditions.
@@ -83,6 +88,8 @@ public:
 	// to conditions in the ConditionsStore.
 	class ConditionEntry {
 		friend ConditionsStore;
+		template <class T>
+		class Condition;
 
 	public:
 		// int64_t proxy helper functions. Those functions allow access to the conditions
@@ -194,6 +201,12 @@ private:
 	std::shared_ptr<ConditionEntry> GetEntry(const std::string &name);
 	std::shared_ptr<const ConditionEntry> GetEntry(const std::string &name) const;
 	bool VerifyProviderLocation(const std::string &name, DerivedProvider *provider) const;
+
+	// Return an entry if there is one, otherwise make a new one.
+	// (Underlying implementation of operator[])
+	std::shared_ptr<ConditionEntry> EnsureEntry(const std::string &name);
+
+	// Construct a new entry in storage, or return the one that is there.
 	std::shared_ptr<ConditionEntry> FromStorage(const std::string &name);
 
 
