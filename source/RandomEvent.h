@@ -66,10 +66,10 @@ T InitialPeriod(const T &period, U minimumValue, bool overrideMinimum)
 	T result(period);
 	if(result > 0)
 		return result;
-	else if(overrideMinimum)
-		result = 0;
-	else
+	else if(!overrideMinimum)
 		result = minimumValue;
+	else if(result < 0)
+		result = 0;
 	return result;
 }
 
