@@ -66,6 +66,31 @@ public:
 	};
 
 
+	class FleetRemover {
+	public:
+		static const unsigned AND = 1;
+		static const unsigned OR = 2;
+		static const unsigned NAND = 4; // a "not" block
+		static const unsigned ID_LIST = 8;
+		static const unsigned GOVERNMENT_LIST = 16;
+		static const unsigned NAME_LIST = 32;
+		static const unsigned REQUIRE_AN_ID = 64;
+		static const unsigned REQUIRE_DEFAULT_ID = 128;
+
+		static const unsigned SHOULD_HAVE_CHILDREN = AND | OR | NAND;
+		static const unsigned SHOULD_HAVE_KEYS = ID_LIST | GOVERNMENT_LIST | NAME_LIST;
+
+		FleetRemover() = default;
+		FleetRemover(const DataNode &node, bool root);
+		bool Match(const LimitedEvents<Fleet> &fleet) const;
+
+	private:
+		unsigned action;
+		std::vector<std::string> keys;
+		std::vector<FleetRemover> children;
+	};
+
+
 public:
 	// Load a system's description.
 	void Load(const DataNode &node, Set<Planet> &planets);

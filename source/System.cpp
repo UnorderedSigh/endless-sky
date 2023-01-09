@@ -89,6 +89,96 @@ double System::Asteroid::Energy() const
 
 
 
+System::FleetRemover::FleetRemover(const DataNode &node, bool root)
+{
+	if(root)
+		action = AND;
+	else if(node.Size()<1)
+		return;
+	else if(node.Token(0) == "id" && node.Size() == 1)
+		action = REQUIRE_AN_ID;
+	else if(node.Size() == 2 && node.Token(0) == "no" && node.Token(1) == "id")
+		action = REQUIRE_NO_ID;
+	else if(node.Size() > 1 && node.Token(0) == "id")
+		action = ID_LIST;
+	else if(node.Size() > 1 && node.Token(0) == "government")
+		action = GOVERNMENT_LIST;
+	else if(node.Size() > 1 && node.Token(0) == "name")
+		action = NAME_LIST;
+	else if(node.Size() == 1 && node.Token(0) == "and")
+		action = AND;
+	else if(node.Size() == 1 && node.Token(0) == "or")
+		action = OR;
+	else if(node.Size() == 1 && node.Token(0) == "not")
+		action = NAND;
+
+	if( (action & SHOULD_HAVE_KEYS) )
+	{
+		keys.reserve(child.Size() - 1);
+		for(int i = 1; i < child.Size(); i++)
+			keys.push_back(child.Token(i));
+	}
+
+	if( (action & SHOULD_HAVE_CHILDREN) )
+		for(auto & child : node)
+			children.emplace_back(child, false);
+}
+
+
+
+bool System::FleetRemover::Match(const LimitedEvents<Fleet> &fleet)
+{
+	if(action == AND)
+	{
+		for(auto & child : node)
+			if(!child.Match(fleet))
+				return false;
+		return true;
+	}
+	else if(action == OR)
+	{
+		for(auto & child : node)
+			if(child.Match(fleet))
+				return true;
+		return false;
+	}
+	else if(action == NAND)
+	{
+		for(auto & child : node)
+			if(!child.Match(fleet))
+				return true;
+		return false;
+	}
+	else if(action == ID_LIST)
+	{
+		for(auto &id : keys)
+			if(Fleet.Id() == id)
+				return true;
+		return false;
+	}
+	else if(action == NAME_LIST)
+	{
+		for(auto &name : keys)
+			if(Fleet.Get()->Name() == name)
+				return true;
+		return false;
+	}
+	else if(action == GOVERNMENT_LIST)
+	{
+		for(auto &name : keys)
+			if(Fleet.Get()->GetGovernment() && Fleet.Get()->GetGovernment().GetName == name)
+				return true;
+		return false;
+	}
+	else if(action == REQUIRE_AN_ID)
+		return !fleet.GetFlags(Fleet::DEFAULT_FLEET_ID);
+	else if(action == REQUIRE_DEFAULT_ID)
+		return fleet.GetFlags(Fleet::DEFAULT_FLEET_ID);
+	return true;
+}
+
+
+
 void System::ReadInt(const DataNode &node, const string &name, int &value, int index)
 {
 	if(node.Size() < index + 1)

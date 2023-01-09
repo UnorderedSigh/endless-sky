@@ -82,6 +82,7 @@ public:
 	static void Place(const System &system, Ship &ship);
 
 	int64_t Strength() const;
+	const std::string &FleetName() const;
 
 
 private:
