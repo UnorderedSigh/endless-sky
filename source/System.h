@@ -74,19 +74,34 @@ public:
 		static const unsigned ID_LIST = 8;
 		static const unsigned GOVERNMENT_LIST = 16;
 		static const unsigned NAME_LIST = 32;
-		static const unsigned REQUIRE_AN_ID = 64;
-		static const unsigned REQUIRE_DEFAULT_ID = 128;
+		static const unsigned REQUIRE_ID = 64;
+		static const unsigned FORBID_ID = 128;
+		static const unsigned REQUIRE_GOVERNMENT = 256;
 
 		static const unsigned SHOULD_HAVE_CHILDREN = AND | OR | NAND;
 		static const unsigned SHOULD_HAVE_KEYS = ID_LIST | GOVERNMENT_LIST | NAME_LIST;
 
 		FleetRemover() = default;
-		FleetRemover(const DataNode &node, bool root);
+		FleetRemover(const DataNode &node, int shift);
+
+		// Should this fleet be removed?
 		bool Match(const LimitedEvents<Fleet> &fleet) const;
 
+		// Recursively removes any FleetRemovers that represent invalid queries
+		// like empty "and" blocks or lines with nonsense strings.
+		void PruneInvalidDescendants();
+
+		// Does this FleetRemover represent a valid query?
+		// Assumes PruneInvalidDescendants() has already been called.
+		bool IsValid() const;
+
 	private:
-		unsigned action;
+		unsigned action = 0;
+
+		// The ids, governments, or names to check:
 		std::vector<std::string> keys;
+
+		// Children of composite removal clauses (and, or, not):
 		std::vector<FleetRemover> children;
 	};
 

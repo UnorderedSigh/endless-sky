@@ -89,62 +89,69 @@ double System::Asteroid::Energy() const
 
 
 
-System::FleetRemover::FleetRemover(const DataNode &node, bool root)
+System::FleetRemover::FleetRemover(const DataNode &node, int shift)
 {
-	if(root)
-		action = AND;
-	else if(node.Size()<1)
+	if(node.Size()<1)
 		return;
-	else if(node.Token(0) == "id" && node.Size() == 1)
-		action = REQUIRE_AN_ID;
-	else if(node.Size() == 2 && node.Token(0) == "no" && node.Token(1) == "id")
-		action = REQUIRE_NO_ID;
-	else if(node.Size() > 1 && node.Token(0) == "id")
-		action = ID_LIST;
-	else if(node.Size() > 1 && node.Token(0) == "government")
-		action = GOVERNMENT_LIST;
-	else if(node.Size() > 1 && node.Token(0) == "name")
-		action = NAME_LIST;
-	else if(node.Size() == 1 && node.Token(0) == "and")
+	else if(node.Token(shift) == "fleet")
+		// Top level fleet selection node.
 		action = AND;
-	else if(node.Size() == 1 && node.Token(0) == "or")
+	else if(node.Token(shift) == "id" && node.Size() == 1 + shift)
+		action = REQUIRE_ID;
+	else if(node.Size() == 2 + shift && node.Token(shift) == "no" && node.Token(shift + 1) == "id")
+		action = FORBID_ID;
+	else if(node.Size() > 1 + shift && node.Token(shift) == "id")
+		action = ID_LIST;
+	else if(node.Size() > 1 + shift && node.Token(shift) == "government")
+		action = GOVERNMENT_LIST;
+	else if(node.Size() == 1 + shift && node.Token(shift) == "government")
+		action = REQUIRE_GOVERNMENT;
+	else if(node.Size() > 1 + shift && node.Token(shift) == "name")
+		action = NAME_LIST;
+	else if(node.Size() == 1 + shift && node.Token(shift) == "and")
+		action = AND;
+	else if(node.Size() == 1 + shift && node.Token(shift) == "or")
 		action = OR;
-	else if(node.Size() == 1 && node.Token(0) == "not")
+	else if(node.Size() > 1 + shift && node.Token(shift) == "not")
+	{
+		// This is a simple "not xyz" line.
 		action = NAND;
+		children.emplace_back(node, shift + 1);
+		return;
+	}
+	else
+		node.PrintTrace("Unrecognized fleet removal specification.");
 
 	if( (action & SHOULD_HAVE_KEYS) )
-	{
-		keys.reserve(child.Size() - 1);
-		for(int i = 1; i < child.Size(); i++)
-			keys.push_back(child.Token(i));
-	}
+		for(int i = 1 + shift; i < node.Size(); i++)
+			keys.push_back(node.Token(i));
 
 	if( (action & SHOULD_HAVE_CHILDREN) )
 		for(auto & child : node)
-			children.emplace_back(child, false);
+			children.emplace_back(child, 0);
 }
 
 
 
-bool System::FleetRemover::Match(const LimitedEvents<Fleet> &fleet)
+bool System::FleetRemover::Match(const LimitedEvents<Fleet> &fleet) const
 {
 	if(action == AND)
 	{
-		for(auto & child : node)
+		for(auto & child : children)
 			if(!child.Match(fleet))
 				return false;
 		return true;
 	}
 	else if(action == OR)
 	{
-		for(auto & child : node)
+		for(auto & child : children)
 			if(child.Match(fleet))
 				return true;
 		return false;
 	}
 	else if(action == NAND)
 	{
-		for(auto & child : node)
+		for(auto & child : children)
 			if(!child.Match(fleet))
 				return true;
 		return false;
@@ -152,29 +159,63 @@ bool System::FleetRemover::Match(const LimitedEvents<Fleet> &fleet)
 	else if(action == ID_LIST)
 	{
 		for(auto &id : keys)
-			if(Fleet.Id() == id)
+			if(fleet.Id() == id)
 				return true;
 		return false;
 	}
 	else if(action == NAME_LIST)
 	{
 		for(auto &name : keys)
-			if(Fleet.Get()->Name() == name)
+			if(fleet.Get()->FleetName() == name)
 				return true;
 		return false;
 	}
 	else if(action == GOVERNMENT_LIST)
 	{
 		for(auto &name : keys)
-			if(Fleet.Get()->GetGovernment() && Fleet.Get()->GetGovernment().GetName == name)
+			if(fleet.Get()->GetGovernment() && fleet.Get()->GetGovernment()->GetName() == name)
 				return true;
 		return false;
 	}
-	else if(action == REQUIRE_AN_ID)
+	else if(action == REQUIRE_ID)
 		return !fleet.GetFlags(Fleet::DEFAULT_FLEET_ID);
-	else if(action == REQUIRE_DEFAULT_ID)
+	else if(action == FORBID_ID)
 		return fleet.GetFlags(Fleet::DEFAULT_FLEET_ID);
+	else if(action == REQUIRE_GOVERNMENT)
+		return fleet.Get()->GetGovernment();
+
+	else
+		// An empty FleetRemover always matches.
+		return true;
+}
+
+
+
+bool System::FleetRemover::IsValid() const
+{
+	if(!action)
+		return false;
+	else if( (action & SHOULD_HAVE_KEYS) && keys.empty() )
+		return false;
+	else if( (action & SHOULD_HAVE_CHILDREN) && children.empty() )
+		return false;
+	// Does not check children since PruneInvalidDescendants should already have been called.
 	return true;
+}
+
+
+
+void System::FleetRemover::PruneInvalidDescendants()
+{
+	if( (action & SHOULD_HAVE_CHILDREN) )
+		for(auto it = children.begin(); it != children.end(); )
+		{
+			it->PruneInvalidDescendants();
+			if(it->IsValid())
+				++it;
+			else
+				it = children.erase(it);
+		}
 }
 
 
@@ -254,6 +295,11 @@ void System::Load(const DataNode &node, Set<Planet> &planets)
 		// "remove object" should only remove all if the node lacks children, as the children
 		// of an object node are its values.
 		bool removeAll = (remove && !hasValue && !(key == "object" && child.HasChildren()));
+
+		// Special case: A fleet with no key, but with children, is a fleet selection block
+		if(child.Size() == 1 && key == "fleet" && child.HasChildren())
+			removeAll = false;
+
 		// If this is the first entry for the given key, and we are not in "add"
 		// or "remove" mode, its previous value should be cleared.
 		bool overwriteAll = (!add && !remove && shouldOverwrite.count(key));
@@ -359,10 +405,28 @@ void System::Load(const DataNode &node, Set<Planet> &planets)
 		}
 		else if(key == "fleet")
 		{
+
+			if(remove && !hasValue)
+			{
+				// This is a fleet removal block.
+				FleetRemover remover(child, 0);
+				remover.PruneInvalidDescendants();
+				if(remover.IsValid())
+				{
+					for(auto it = fleets.begin(); it != fleets.end();)
+						if(remover.Match(*it))
+							it = fleets.erase(it);
+						else
+							++it;
+				}
+				continue;
+			}
+
 			const Fleet *fleet = GameData::Fleets().Get(value);
 
 			if(remove)
 			{
+				// This is an old style "fleet <name>" removal.
 				for(auto it = fleets.begin(); it != fleets.end(); ++it)
 					if(it->Get() == fleet)
 					{
@@ -372,6 +436,7 @@ void System::Load(const DataNode &node, Set<Planet> &planets)
 			}
 			else
 			{
+				// Adding a fleet.
 				int period = 200;
 				int limit = LimitedEvents<Fleet>::NO_LIMIT;
 				int initialCount = 0;

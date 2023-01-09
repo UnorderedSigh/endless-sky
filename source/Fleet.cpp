@@ -555,7 +555,7 @@ int64_t Fleet::Strength() const
 
 
 
-const std::string &FleetName() const
+const std::string &Fleet::FleetName() const
 {
 	return fleetName;
 }
