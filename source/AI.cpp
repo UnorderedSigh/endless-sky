@@ -479,6 +479,8 @@ void AI::Clean()
 	shipStrength.clear();
 	enemyStrength.clear();
 	allyStrength.clear();
+	enemyLingerTimer.clear();
+	surveillanceLingerTimer.clear();
 }
 
 
@@ -938,7 +940,7 @@ void AI::Step(const PlayerInfo &player, Command &activeCommands)
 			MoveIndependent(*it, command);
 		else if(parent->GetSystem() != it->GetSystem())
 		{
-			if(personality.IsStaying() || !it->Attributes().Get("fuel capacity"))
+			if(personality.IsStaying() || it->IsLingering() || !it->Attributes().Get("fuel capacity"))
 				MoveIndependent(*it, command);
 			else
 				MoveEscort(*it, command);
@@ -1009,6 +1011,53 @@ int64_t AI::EnemyStrength(const Government *government)
 {
 	auto it = enemyStrength.find(government);
 	return (it == enemyStrength.end() ? 0 : it->second);
+}
+
+
+
+int64_t AI::CalculateLingerTimer(const Government *government, const System *system, bool onlyEnemies)
+{
+	if(!system || !government)
+		return MINIMUM_LINGER_TIMER;
+
+	double probability = 0;
+
+	for(auto &fleetEvent : system.Fleets())
+		if(!onlyEnemies || !fleetEvent.Get()->GetGovernment()
+				|| government->IsEnemy(fleetEvent.Get()->GetGovernment())
+			probability += (1 - probability) * 1.0 / max<double>(1.0, fleetEvent.Period());
+
+	if(probability < 1e-6)
+		return MINIMUM_LINGER_TIMER;
+
+	return clamp<int64_t>(static_cast<int64_t>(ceil(1.0 / probability)),
+		MINIMUM_LINGER_TIMER, MAXIMUM_LINGER_TIMER);
+}
+
+
+
+int64_t AI::LingerTimer(const Government *government, const System *system)
+{
+	if(!government || !system)
+		return MINIMUM_LINGER_TIMER;
+
+	auto it = lingerTimer.find(government);
+	if(it == lingerTimer.end())
+		it = lingerTimer.emplace(government, CalculateLingerTimer(government, system, true)).first;
+	return it->second;
+}
+
+
+
+int64_t AI::SurveillanceLingerTimer(const Government *government, const System *system)
+{
+	if(!government || !system)
+		return MINIMUM_LINGER_TIMER;
+
+	auto it = surveillanceLingerTimer.find(government);
+	if(it == surveillanceLingerTimer.end())
+		it = surveillanceLingerTimer.emplace(government, CalculateLingerTimer(government, system, false)).first;
+	return it->second;
 }
 
 
@@ -1484,6 +1533,16 @@ void AI::MoveIndependent(Ship &ship, Command &command) const
 	// A ship has restricted movement options if it is 'staying' or is hostile to its parent.
 	const bool shouldStay = ship.GetPersonality().IsStaying()
 			|| (ship.GetParent() && ship.GetParent()->GetGovernment()->IsEnemy(gov));
+
+	if(shouldStay)
+	{
+		if(ship.IsLingering())
+			ship.StepLingerTimer();
+		if(ship.IsLingering())
+			shouldStay = false;
+		else if(!ship.LingerTimerAlarmed())
+			ship.ResetLingerTimer(
+
 	// Ships should choose a random system/planet for travel if they do not
 	// already have a system/planet in mind, and are free to move about.
 	const System *origin = ship.GetSystem();
@@ -2405,6 +2464,7 @@ void AI::DoSwarming(Ship &ship, Command &command, shared_ptr<Ship> &target)
 void AI::DoSurveillance(Ship &ship, Command &command, shared_ptr<Ship> &target) const
 {
 	const bool isStaying = ship.GetPersonality().IsStaying();
+	const bool isLingering = ship.IsLingering();
 	// Since DoSurveillance is called after target-seeking and firing, if this
 	// ship has a target, that target is guaranteed to be targetable.
 	if(target && (target->GetSystem() != ship.GetSystem() || target->IsEnteringHyperspace()))
@@ -2424,7 +2484,7 @@ void AI::DoSurveillance(Ship &ship, Command &command, shared_ptr<Ship> &target) 
 	if(ship.GetTargetSystem())
 	{
 		// Unload surveillance drones in this system before leaving.
-		if(!isStaying)
+		if(!isStaying && !isLingering)
 		{
 			PrepareForHyperspace(ship, command);
 			command |= Command::JUMP;
@@ -2443,7 +2503,7 @@ void AI::DoSurveillance(Ship &ship, Command &command, shared_ptr<Ship> &target) 
 		double distance = ship.Position().Distance(ship.GetTargetStellar()->Position());
 		if(distance < atmosphereScan && !Random::Int(100))
 			ship.SetTargetStellar(nullptr);
-		else if(!isStaying)
+		else if(!isStaying && !isLingering)
 			command |= Command::LAND;
 	}
 	else if(target)

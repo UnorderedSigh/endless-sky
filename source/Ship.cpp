@@ -4128,6 +4128,36 @@ const vector<weak_ptr<Ship>> &Ship::GetEscorts() const
 
 
 
+bool Ship::IsLingering() const
+{
+	return lingerTimer > 0;
+}
+
+
+
+int64_t GetLingerTimer() const
+{
+	return lingerTimer;
+}
+
+
+
+void SetLingerTimer(int64_t value)
+{
+	lingerTimer = value;
+}
+
+
+
+int64_t StepLingerTimer()
+{
+	if(lingerTimer>0)
+		lingerTimer--;
+}
+
+
+
+
 // Add escorts to this ship. Escorts look to the parent ship for movement
 // cues and try to stay with it when it lands or goes into hyperspace.
 void Ship::AddEscort(Ship &ship)

@@ -48,6 +48,9 @@ class System;
 // the same target over and over.
 class AI {
 public:
+	static const int64_t MINIMUM_LINGER_TIMER = 300;
+	static const int64_t MAXIMUM_LINGER_TIMER = 10000;
+
 	// Any object that can be a ship's target is in a list of this type:
 template <class Type>
 	using List = std::list<std::shared_ptr<Type>>;
@@ -73,6 +76,11 @@ template <class Type>
 	// Get the in-system strength of each government's allies and enemies.
 	int64_t AllyStrength(const Government *government);
 	int64_t EnemyStrength(const Government *government);
+
+
+	static int64_t CalculateLingerTimer(const Government *government, const System *system, bool onlyEnemies);
+	int64_t LingerTimer(const Government *government, const System *system);
+	int64_t SurveillanceLingerTimer(const Government *government, const System *system);
 
 
 private:
@@ -231,6 +239,8 @@ private:
 
 	std::map<const Government *, int64_t> enemyStrength;
 	std::map<const Government *, int64_t> allyStrength;
+	std::map<const Government *, int64_t> enemyLingerTimer;
+	std::map<const Government *, int64_t> surveillanceLingerTimer;
 	std::map<const Government *, std::vector<Ship *>> governmentRosters;
 	std::map<const Government *, std::vector<Ship *>> enemyLists;
 	std::map<const Government *, std::vector<Ship *>> allyLists;

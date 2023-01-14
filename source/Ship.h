@@ -444,6 +444,13 @@ public:
 	std::shared_ptr<Ship> GetParent() const;
 	const std::vector<std::weak_ptr<Ship>> &GetEscorts() const;
 
+	bool IsLingering() const;
+	bool LingerTimerAlarmed() const;
+	int64_t GetLingerTimer() const;
+	void ResetLingerTimer(int64_t value);
+	void ClearLingerTimer();
+	int64_t StepLingerTimer();
+
 
 private:
 	// Add or remove a ship from this ship's list of escorts.
@@ -573,6 +580,8 @@ private:
 	int crew = 0;
 	int pilotError = 0;
 	int pilotOkay = 0;
+
+	int64_t lingerTimer = -1;
 
 	// Current status of this particular ship:
 	const System *currentSystem = nullptr;
