@@ -924,6 +924,7 @@ void AI::Step(const PlayerInfo &player, Command &activeCommands)
 				Stop(*it, command);
 			else
 				command.SetTurn(TurnToward(*it, TargetAim(*it)));
+			it->ClearLingerTimer();
 		}
 		else if(FollowOrders(*it, command))
 		{

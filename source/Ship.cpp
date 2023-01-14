@@ -4135,21 +4135,28 @@ bool Ship::IsLingering() const
 
 
 
-int64_t GetLingerTimer() const
+bool Ship::LingerTimerAlarmed() const
 {
-	return lingerTimer;
+	return lingerTimer == 0;
 }
 
 
 
-void SetLingerTimer(int64_t value)
+void Ship::ClearLingerTimer()
+{
+	lingerTimer = 0;
+}
+
+
+
+void Ship::RestartLingerTimer(int64_t frames)
 {
 	lingerTimer = value;
 }
 
 
 
-int64_t StepLingerTimer()
+int64_t Ship::StepLingerTimer()
 {
 	if(lingerTimer>0)
 		lingerTimer--;

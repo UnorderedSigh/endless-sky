@@ -444,11 +444,19 @@ public:
 	std::shared_ptr<Ship> GetParent() const;
 	const std::vector<std::weak_ptr<Ship>> &GetEscorts() const;
 
+	// Is the ship's linger timer running? (value > 0)
 	bool IsLingering() const;
+
+	// Is the linger timer's alarm ringing? (value == 0)
 	bool LingerTimerAlarmed() const;
-	int64_t GetLingerTimer() const;
-	void ResetLingerTimer(int64_t value);
+
+	// Turn off the timer. (value < 0)
 	void ClearLingerTimer();
+
+	// Start the linger timer over:
+	void RestartLingerTimer(int64_t value);
+
+	// Count down the linger timer.
 	int64_t StepLingerTimer();
 
 
