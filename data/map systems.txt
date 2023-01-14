@@ -10138,7 +10138,7 @@ system Durax
 	fleet "Small Core Pirates" 600
 	fleet "Large Core Pirates" 900
 	fleet "Large Syndicate" 2500
-	fleet "Korath Raid" 7000
+	fleet "Korath Raid" 10000
 	fleet "Korath Miners" 17000
 	object
 		sprite star/g0-old
@@ -17614,9 +17614,9 @@ system "Kor Ak'Mari"
 	trade Medical 726
 	trade Metal 217
 	trade Plastic 524
-	fleet "Korath Raid" 3600
-	fleet "Korath Miners" 7500
-	fleet "Korath Large Raid" 3600
+	fleet "Korath Raid (Home)" 3600
+	fleet "Korath Miners (Home)" 7500
+	fleet "Korath Large Raid (Home)" 3600
 	fleet "Korath Defense" 3600
 	object
 		sprite star/carbon
@@ -17682,9 +17682,9 @@ system "Kor En'lakfar"
 	trade Medical 840
 	trade Metal 236
 	trade Plastic 488
-	fleet "Korath Raid" 1250
+	fleet "Korath Raid (Home)" 1250
 	fleet "Korath Home" 720
-	fleet "Korath Large Raid" 15000
+	fleet "Korath Large Raid (Home)" 15000
 	fleet "Korath Surveillance" 32000
 	fleet "Korath Defense" 1775
 	fleet "Korath Civilian Miners" 6000
@@ -17752,7 +17752,7 @@ system "Kor Fel'tar"
 	trade Medical 841
 	trade Metal 256
 	trade Plastic 478
-	fleet "Korath Raid" 2050
+	fleet "Korath Raid (Home)" 2050
 	fleet "Korath Home" 1200
 	fleet "Korath Defense" 2400
 	fleet "Korath Civilian Miners" 5000
@@ -17825,9 +17825,9 @@ system "Kor Men"
 	trade Metal 240
 	trade Plastic 497
 	fleet "Korath Home" 800
-	fleet "Korath Raid" 2040
+	fleet "Korath Raid (Home)" 2040
 	fleet "Korath Defense" 2900
-	fleet "Korath Large Raid" 21000
+	fleet "Korath Large Raid (Home)" 21000
 	fleet "Korath Surveillance" 46000
 	fleet "Korath Civilian Large" 1500
 	fleet "Korath Civilian Miners" 8000
@@ -17894,7 +17894,7 @@ system "Kor Nor'peli"
 	trade Metal 517
 	trade Plastic 423
 	fleet "Korath Defense" 1700
-	fleet "Korath Large Raid" 16000
+	fleet "Korath Large Raid (Home)" 16000
 	fleet "Korath Ember Waste Raid" 1350
 	fleet "Korath Ember Waste Large Raid" 20000
 	fleet "Korath Surveillance" 48000
@@ -18027,10 +18027,10 @@ system "Kor Zena'i"
 	trade Medical 785
 	trade Metal 478
 	trade Plastic 381
-	fleet "Korath Raid" 1850
+	fleet "Korath Raid (Home)" 1850
 	fleet "Korath Home" 1170
 	fleet "Korath Defense" 1660
-	fleet "Korath Large Raid" 16000
+	fleet "Korath Large Raid (Home)" 16000
 	fleet "Korath Surveillance" 31000
 	fleet "Korath Civilian Large" 845
 	fleet "Korsmanath A'awojs" 2500
@@ -20987,11 +20987,11 @@ system Misam
 	trade Plastic 368
 	fleet "Small Core Pirates" 750
 	fleet "Large Core Pirates" 2000
-	fleet "Korath Raid" 5000
-	fleet "Korath Large Raid" 11000
+	fleet "Korath Raid" 7000
+	fleet "Korath Large Raid" 16000
 	fleet "Human Miners" 10000
 	fleet "Large Syndicate" 20000
-	fleet "Korath Miners" 15000
+	fleet "Korath Miners" 20000
 	object
 		sprite star/f5-old
 		distance 50
