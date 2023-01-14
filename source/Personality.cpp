@@ -56,6 +56,7 @@ namespace {
 	const int LINGERING = (1 << 29);
 	const int ENTHUSIASTIC = (1 << 30);
 	const int DARING = (1 << 31);
+	const int PRAGMATIC = (1 << 32);
 
 	const map<string, int> TOKEN = {
 		{"pacifist", PACIFIST},
@@ -89,7 +90,8 @@ namespace {
 		{"launching", LAUNCHING},
 		{"lingering", LINGERING},
 		{"enthusiastic", ENTHUSIASTIC},
-		{"daring", DARING}
+		{"daring", DARING},
+		{"pragmatic", PRAGMATIC}
 	};
 
 	// Tokens that combine two or more flags.
@@ -264,6 +266,13 @@ bool Personality::IsOpportunistic() const
 bool Personality::IsMerciful() const
 {
 	return flags & MERCIFUL;
+}
+
+
+
+bool Personality::IsPragmatic() const
+{
+	return flags & PRAGMATIC;
 }
 
 
