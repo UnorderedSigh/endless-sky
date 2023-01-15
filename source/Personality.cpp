@@ -24,41 +24,42 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 using namespace std;
 
 namespace {
-	const int PACIFIST = (1 << 0);
-	const int FORBEARING = (1 << 1);
-	const int TIMID = (1 << 2);
-	const int DISABLES = (1 << 3);
-	const int PLUNDERS = (1 << 4);
-	const int HUNTING = (1 << 5);
-	const int STAYING = (1 << 6);
-	const int ENTERING = (1 << 7);
-	const int NEMESIS = (1 << 8);
-	const int SURVEILLANCE = (1 << 9);
-	const int UNINTERESTED = (1 << 10);
-	const int WAITING = (1 << 11);
-	const int DERELICT = (1 << 12);
-	const int FLEEING = (1 << 13);
-	const int ESCORT = (1 << 14);
-	const int FRUGAL = (1 << 15);
-	const int COWARD = (1 << 16);
-	const int VINDICTIVE = (1 << 17);
-	const int SWARMING = (1 << 18);
-	const int UNCONSTRAINED = (1 << 19);
-	const int MINING = (1 << 20);
-	const int HARVESTS = (1 << 21);
-	const int APPEASING = (1 << 22);
-	const int MUTE = (1 << 23);
-	const int OPPORTUNISTIC = (1 << 24);
-	const int MERCIFUL = (1 << 25);
-	const int TARGET = (1 << 26);
-	const int MARKED = (1 << 27);
-	const int LAUNCHING = (1 << 28);
-	const int LINGERING = (1 << 29);
-	const int ENTHUSIASTIC = (1 << 30);
-	const int DARING = (1 << 31);
-	const int PRAGMATIC = (1 << 32);
+	const int64_t ONE = 1;
+	const int64_t PACIFIST = (ONE << 0);
+	const int64_t FORBEARING = (ONE << 1);
+	const int64_t TIMID = (ONE << 2);
+	const int64_t DISABLES = (ONE << 3);
+	const int64_t PLUNDERS = (ONE << 4);
+	const int64_t HUNTING = (ONE << 5);
+	const int64_t STAYING = (ONE << 6);
+	const int64_t ENTERING = (ONE << 7);
+	const int64_t NEMESIS = (ONE << 8);
+	const int64_t SURVEILLANCE = (ONE << 9);
+	const int64_t UNINTERESTED = (ONE << 10);
+	const int64_t WAITING = (ONE << 11);
+	const int64_t DERELICT = (ONE << 12);
+	const int64_t FLEEING = (ONE << 13);
+	const int64_t ESCORT = (ONE << 14);
+	const int64_t FRUGAL = (ONE << 15);
+	const int64_t COWARD = (ONE << 16);
+	const int64_t VINDICTIVE = (ONE << 17);
+	const int64_t SWARMING = (ONE << 18);
+	const int64_t UNCONSTRAINED = (ONE << 19);
+	const int64_t MINING = (ONE << 20);
+	const int64_t HARVESTS = (ONE << 21);
+	const int64_t APPEASING = (ONE << 22);
+	const int64_t MUTE = (ONE << 23);
+	const int64_t OPPORTUNISTIC = (ONE << 24);
+	const int64_t MERCIFUL = (ONE << 25);
+	const int64_t TARGET = (ONE << 26);
+	const int64_t MARKED = (ONE << 27);
+	const int64_t LAUNCHING = (ONE << 28);
+	const int64_t LINGERING = (ONE << 29);
+	const int64_t ENTHUSIASTIC = (ONE << 30);
+	const int64_t DARING = (ONE << 31);
+	const int64_t PRAGMATIC = (ONE << 32);
 
-	const map<string, int> TOKEN = {
+	const map<string, int64_t> TOKEN = {
 		{"pacifist", PACIFIST},
 		{"forbearing", FORBEARING},
 		{"timid", TIMID},
@@ -95,7 +96,7 @@ namespace {
 	};
 
 	// Tokens that combine two or more flags.
-	const map<string, int> COMPOSITE_TOKEN = {
+	const map<string, int64_t> COMPOSITE_TOKEN = {
 		{"heroic", DARING | HUNTING}
 	};
 
@@ -442,7 +443,7 @@ Personality Personality::DefenderFighter()
 
 
 
-void Personality::Parse(const DataNode &node, int index, bool remove)
+void Personality::Parse(const DataNode &node, int64_t index, bool remove)
 {
 	const string &token = node.Token(index);
 
