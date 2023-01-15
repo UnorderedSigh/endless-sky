@@ -443,7 +443,7 @@ Personality Personality::DefenderFighter()
 
 
 
-void Personality::Parse(const DataNode &node, int64_t index, bool remove)
+void Personality::Parse(const DataNode &node, int index, bool remove)
 {
 	const string &token = node.Token(index);
 
