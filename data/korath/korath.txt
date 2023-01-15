@@ -209,7 +209,7 @@ fleet "Korath Raid"
 	fighters "korath"
 	cargo 1
 	personality
-		disables plunders opportunistic harvests pragmatic hunting lingering enthusiastic
+		disables plunders opportunistic harvests pragmatic hunting lingering enthusiastic coward
 	variant 4
 		"Palavret"
 		"'olofez" 2
@@ -239,7 +239,7 @@ fleet "Korath Ember Waste Raid"
 	commodities "Food" "Clothing" "Metal" "Plastic" "Medical" "Heavy Metals"
 	outfitters "Korath Exiles Remnant Donations"
 	personality
-		disables plunders opportunistic harvests
+		disables plunders opportunistic harvests pragmatic
 	variant 15
 		"Palavret (Ember)"
 		"'olofez" 2
@@ -262,7 +262,7 @@ fleet "Korath Miners"
 	fighters "korath"
 	cargo 0
 	personality
-		timid disables plunders frugal mining harvests pragmatic hunting enthusiastic
+		timid disables plunders frugal mining harvests pragmatic hunting enthusiastic coward
 	variant
 		"Rano'erek"
 		"'olofez (Digger)" 4
@@ -387,7 +387,7 @@ fleet "Korath Large Raid"
 	fighters "korath"
 	cargo 1
 	personality
-		disables plunders opportunistic harvests pragmatic hunting lingering enthusiastic
+		disables plunders opportunistic harvests pragmatic hunting lingering enthusiastic coward
 	variant 5
 		"Palavret" 2
 		"'olofez" 4
@@ -425,7 +425,7 @@ fleet "Korath Ember Waste Large Raid"
 	commodities "Food" "Clothing" "Metal" "Plastic" "Medical" "Heavy Metals"
 	outfitters "Korath Exiles Remnant Donations"
 	personality
-		disables plunders opportunistic harvests
+		disables plunders opportunistic harvests pragmatic
 	variant 15
 		"Palavret (Ember)"
 		"'olofez" 2
