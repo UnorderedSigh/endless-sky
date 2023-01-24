@@ -32,7 +32,7 @@ class Personality {
 public:
 	Personality() noexcept;
 
-	void Load(const DataNode &node);
+	void Load(const DataNode &node, int tokensToSkip = 0);
 	void Save(DataWriter &out) const;
 
 	bool IsDefined() const;

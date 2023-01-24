@@ -174,8 +174,21 @@ public:
 	void SetSystem(const System *system);
 	void SetPlanet(const Planet *planet);
 	void SetGovernment(const Government *government);
+	void SetLootedGovernment(const Government *lootedGovernment);
 	void SetIsSpecial(bool special = true);
 	bool IsSpecial() const;
+
+	// Changes the government of a ship currently in space, and optionally its swizzle.
+	// Can also wipe information about the defeated and looted governments.
+	void ChangeGovernment(const Government *next, bool changeSwizzle, bool clearLooted);
+
+	// If the ship is not already marked as looted, make it so
+	void MakeLooted();
+
+	// Has the ship been marked as looted?
+	bool IsLooted() const;
+
+	bool FriendlyAfterLootedBy(const Government *other) const;
 
 	// If a ship belongs to the player, the player can give it commands.
 	void SetIsYours(bool yours = true);
@@ -190,6 +203,8 @@ public:
 	// Access the ship's personality, which affects how the AI behaves.
 	const Personality &GetPersonality() const;
 	void SetPersonality(const Personality &other);
+	const Personality &GetLootedPersonality() const;
+	void SetLootedPersonality(const Personality &other);
 	// Get a random hail message, or set the object used to generate them. If no
 	// object is given the government's default will be used.
 	const Phrase *GetHailPhrase() const;
@@ -284,7 +299,7 @@ public:
 	// Check if this ship is able to give the given ship enough fuel to jump.
 	bool CanRefuel(const Ship &other) const;
 	// Give the other ship enough fuel for it to jump.
-	double TransferFuel(double amount, Ship *to);
+	double TransferFuel(double amount, Ship *to, double keep = 0);
 	// Mark this ship as property of the given ship. Returns the number of crew transferred from the capturer.
 	int WasCaptured(const std::shared_ptr<Ship> &capturer);
 	// Clear all orders and targets this ship has (after capture or transfer of control).
@@ -463,6 +478,9 @@ private:
 	double CalculateAttraction() const;
 	double CalculateDeterrence() const;
 
+	// Helper function for Board, to implement the assistance part.
+	std::shared_ptr<Ship> Assist(std::shared_ptr<Ship> victim, bool refuel);
+
 
 private:
 	// Protected member variables of the Body class:
@@ -507,6 +525,7 @@ private:
 	bool neverDisabled = false;
 	bool isCapturable = true;
 	bool isInvisible = false;
+	bool isLooted = false;
 	int customSwizzle = -1;
 	double cloak = 0.;
 	double cloakDisruption = 0.;
@@ -524,6 +543,7 @@ private:
 	FireCommand firingCommands;
 
 	Personality personality;
+	Personality lootedPersonality;
 	const Phrase *hail = nullptr;
 
 	// Installed outfits, cargo, etc.:

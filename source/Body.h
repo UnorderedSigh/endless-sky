@@ -101,6 +101,8 @@ protected:
 
 	// Government, for use in collision checks.
 	const Government *government = nullptr;
+	// For changing government after the body is looted:
+	const Government *lootedGovernment = nullptr;
 
 
 private:

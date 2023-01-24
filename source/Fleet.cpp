@@ -171,17 +171,30 @@ void Fleet::Load(const DataNode &node)
 		// are only valid with "variant" or "personality" definitions.
 		bool add = (child.Token(0) == "add");
 		bool remove = (child.Token(0) == "remove");
-		bool hasValue = (child.Size() >= 2);
-		if((add || remove) && (!hasValue || (child.Token(1) != "variant" && child.Token(1) != "personality")))
+		int keyIndex = (add || remove);
+		if(child.Size() <= keyIndex)
+		{
+			child.PrintTrace("Warning: Skipping line with no key:");
+			continue;
+		}
+		int valueIndex = keyIndex + 1;
+		bool looted = (child.Size() > keyIndex && child.Token(keyIndex) == "looted");
+		bool hasValue = (child.Size() >= 2 + looted);
+		if((add || remove) && (!hasValue || (child.Token(1) != "variant" && child.Token(1) != "personality"
+				&& child.Token(1) != "looted")))
 		{
 			child.PrintTrace("Warning: Skipping invalid \"" + child.Token(0) + "\" tag:");
 			continue;
 		}
 
 		// If this line is an add or remove, the key is the token at index 1.
-		const string &key = child.Token(add || remove);
+		const string &key = child.Token(keyIndex);
 
-		if(key == "government" && hasValue)
+		if(looted && remove && key == "government")
+			lootedGovernment = nullptr;
+		else if(looted && key == "government" && child.Size() > valueIndex)
+			lootedGovernment = GameData::Governments().Get(child.Token(valueIndex));
+		else if(!looted && key == "government" && hasValue)
 			government = GameData::Governments().Get(child.Token(1));
 		else if(key == "names" && hasValue)
 			names = GameData::Phrases().Get(child.Token(1));
@@ -201,6 +214,10 @@ void Fleet::Load(const DataNode &node)
 			for(int i = 1; i < child.Size(); ++i)
 				outfitters.insert(GameData::Outfitters().Get(child.Token(i)));
 		}
+		else if(remove && looted && key == "personality")
+			lootedPersonality = Personality();
+		else if(looted && key == "personality")
+			lootedPersonality.Load(child, keyIndex);
 		else if(key == "personality")
 			personality.Load(child);
 		else if(key == "variant" && !remove)
@@ -578,7 +595,11 @@ vector<shared_ptr<Ship>> Fleet::Instantiate(const vector<const Ship *> &ships) c
 		if(phrase)
 			ship->SetName(phrase->Get());
 		ship->SetGovernment(government);
+		if(lootedGovernment)
+			ship->SetLootedGovernment(lootedGovernment);
 		ship->SetPersonality(personality);
+		if(lootedPersonality.IsDefined())
+			ship->SetLootedPersonality(lootedPersonality);
 
 		placed.push_back(ship);
 	}
