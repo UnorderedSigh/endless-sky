@@ -172,13 +172,14 @@ void Fleet::Load(const DataNode &node)
 		bool add = (child.Token(0) == "add");
 		bool remove = (child.Token(0) == "remove");
 		int keyIndex = (add || remove);
+		bool looted = (child.Size() > keyIndex && child.Token(keyIndex) == "looted");
+		keyIndex += looted;
 		if(child.Size() <= keyIndex)
 		{
 			child.PrintTrace("Warning: Skipping line with no key:");
 			continue;
 		}
 		int valueIndex = keyIndex + 1;
-		bool looted = (child.Size() > keyIndex && child.Token(keyIndex) == "looted");
 		bool hasValue = (child.Size() >= 2 + looted);
 		if((add || remove) && (!hasValue || (child.Token(1) != "variant" && child.Token(1) != "personality"
 				&& child.Token(1) != "looted")))
@@ -187,7 +188,6 @@ void Fleet::Load(const DataNode &node)
 			continue;
 		}
 
-		// If this line is an add or remove, the key is the token at index 1.
 		const string &key = child.Token(keyIndex);
 
 		if(looted && remove && key == "government")
