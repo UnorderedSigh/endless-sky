@@ -227,33 +227,6 @@ mission "Hai Reveal [A03a] Symbol Identification"
 event "alondo symbol timer"
 
 
-mission "Hai Reveal [A03a1]"
-	minor
-	invisible
-	source
-		government "Republic" "Syndicate" "Hai" "Free Worlds" "Independent"
-		attributes "spaceport"
-	to offer
-		has "event: alondo symbol timer"
-		has "Hai Reveal: Pirate Troubles [0]: done"
-	on offer
-		fail "Hai Reveal [A03a] Symbol Identification"
-		# This presumably does nothing if it's already failed.
-		dialog `A message from Alondo informs you that he has a tenuous lead he can give you when you're not busy.`
-
-
-mission "Hai Reveal [A03a2]"
-	minor
-	invisible
-	source
-		government "Republic" "Syndicate" "Hai" "Free Worlds" "Independent"
-		attributes "spaceport"
-	to offer
-		has "Hai Reveal: Pirate Troubles [0]: done"
-	on offer
-		fail "Hai Reveal [A03a] Symbol Identification"
-
-
 
 mission "Hai Reveal: Pirate Troubles [0]"
 	name "Defend <system>"
