@@ -20,6 +20,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "Point.h"
 
 #include <bitset>
+#include <map>
+#include <string>
+#include <vector>
 
 class DataNode;
 class DataWriter;
@@ -31,6 +34,48 @@ class DataWriter;
 // behaviors, like plundering ships or launching surveillance drones, that are
 // used to make some fleets noticeably different from others.
 class Personality {
+private:
+	enum PersonalityTrait {
+		PACIFIST,
+		FORBEARING,
+		TIMID,
+		DISABLES,
+		PLUNDERS,
+		HUNTING,
+		STAYING,
+		ENTERING,
+		NEMESIS,
+		SURVEILLANCE,
+		UNINTERESTED,
+		WAITING,
+		DERELICT,
+		FLEEING,
+		ESCORT,
+		FRUGAL,
+		COWARD,
+		VINDICTIVE,
+		SWARMING,
+		UNCONSTRAINED,
+		MINING,
+		HARVESTS,
+		APPEASING,
+		MUTE,
+		OPPORTUNISTIC,
+		MERCIFUL,
+		TARGET,
+		MARKED,
+		LAUNCHING,
+		DARING,
+		SECRETIVE,
+		RAMMING,
+
+		// Ensure this is last so it can be used for bounds checking.
+		// Otherwise, the game will abort at runtime due to out-of-bounds
+		// access in std::bitset<PERSONALITY_COUNT>
+		PERSONALITY_COUNT
+	};
+
+
 public:
 	Personality() noexcept;
 
@@ -95,11 +140,10 @@ private:
 
 
 private:
-	// Make sure this matches the number of items in PersonalityTrait,
-	// or the game will abort at runtime.
-	static const int PERSONALITY_COUNT = 32;
-
 	bool isDefined = false;
+
+	static const std::map<std::string, PersonalityTrait> TOKEN;
+	static const std::map<std::string, std::vector<PersonalityTrait>> COMPOSITE_TOKEN;
 
 	std::bitset<PERSONALITY_COUNT> flags;
 	double confusionMultiplier;

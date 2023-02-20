@@ -19,91 +19,55 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "DataNode.h"
 #include "DataWriter.h"
 
-#include <map>
-#include <vector>
-
 using namespace std;
 
 namespace {
-	// Make sure the length of PersonalityTrait matches PERSONALITY_COUNT
-	// or the game will crash at runtime.
-	enum PersonalityTrait {
-		PACIFIST,
-		FORBEARING,
-		TIMID,
-		DISABLES,
-		PLUNDERS,
-		HUNTING,
-		STAYING,
-		ENTERING,
-		NEMESIS,
-		SURVEILLANCE,
-		UNINTERESTED,
-		WAITING,
-		DERELICT,
-		FLEEING,
-		ESCORT,
-		FRUGAL,
-		COWARD,
-		VINDICTIVE,
-		SWARMING,
-		UNCONSTRAINED,
-		MINING,
-		HARVESTS,
-		APPEASING,
-		MUTE,
-		OPPORTUNISTIC,
-		MERCIFUL,
-		TARGET,
-		MARKED,
-		LAUNCHING,
-		DARING,
-		SECRETIVE,
-		RAMMING
-	};
-
-	const map<string, PersonalityTrait> TOKEN = {
-		{"pacifist", PACIFIST},
-		{"forbearing", FORBEARING},
-		{"timid", TIMID},
-		{"disables", DISABLES},
-		{"plunders", PLUNDERS},
-		{"hunting", HUNTING},
-		{"staying", STAYING},
-		{"entering", ENTERING},
-		{"nemesis", NEMESIS},
-		{"surveillance", SURVEILLANCE},
-		{"uninterested", UNINTERESTED},
-		{"waiting", WAITING},
-		{"derelict", DERELICT},
-		{"fleeing", FLEEING},
-		{"escort", ESCORT},
-		{"frugal", FRUGAL},
-		{"coward", COWARD},
-		{"vindictive", VINDICTIVE},
-		{"swarming", SWARMING},
-		{"unconstrained", UNCONSTRAINED},
-		{"mining", MINING},
-		{"harvests", HARVESTS},
-		{"appeasing", APPEASING},
-		{"mute", MUTE},
-		{"opportunistic", OPPORTUNISTIC},
-		{"merciful", MERCIFUL},
-		{"target", TARGET},
-		{"marked", MARKED},
-		{"launching", LAUNCHING},
-		{"daring", DARING},
-		{"secretive", SECRETIVE},
-		{"ramming", RAMMING}
-	};
-
-	// Tokens that combine two or more flags.
-	const map<string, vector<PersonalityTrait>> COMPOSITE_TOKEN = {
-		{"heroic", {DARING, HUNTING}}
-	};
-
 	const double DEFAULT_CONFUSION = 10.;
 }
+
+
+
+const map<string, Personality::PersonalityTrait> Personality::TOKEN = {
+	{"pacifist", PACIFIST},
+	{"forbearing", FORBEARING},
+	{"timid", TIMID},
+	{"disables", DISABLES},
+	{"plunders", PLUNDERS},
+	{"hunting", HUNTING},
+	{"staying", STAYING},
+	{"entering", ENTERING},
+	{"nemesis", NEMESIS},
+	{"surveillance", SURVEILLANCE},
+	{"uninterested", UNINTERESTED},
+	{"waiting", WAITING},
+	{"derelict", DERELICT},
+	{"fleeing", FLEEING},
+	{"escort", ESCORT},
+	{"frugal", FRUGAL},
+	{"coward", COWARD},
+	{"vindictive", VINDICTIVE},
+	{"swarming", SWARMING},
+	{"unconstrained", UNCONSTRAINED},
+	{"mining", MINING},
+	{"harvests", HARVESTS},
+	{"appeasing", APPEASING},
+	{"mute", MUTE},
+	{"opportunistic", OPPORTUNISTIC},
+	{"merciful", MERCIFUL},
+	{"target", TARGET},
+	{"marked", MARKED},
+	{"launching", LAUNCHING},
+	{"daring", DARING},
+	{"secretive", SECRETIVE},
+	{"ramming", RAMMING}
+};
+
+
+
+// Tokens that combine two or more flags.
+const map<string, vector<Personality::PersonalityTrait>> Personality::COMPOSITE_TOKEN = {
+	{"heroic", {DARING, HUNTING}}
+};
 
 
 
