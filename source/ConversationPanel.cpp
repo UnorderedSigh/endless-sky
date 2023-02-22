@@ -300,6 +300,8 @@ bool ConversationPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &comm
 		return true;
 	}
 
+	int number = NumberChoice(key);
+
 	// Let the player select choices by using the arrow keys and then pressing
 	// return, or by pressing a number key.
 	if(key == SDLK_UP && choice > 0)
@@ -308,14 +310,43 @@ bool ConversationPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &comm
 		++choice;
 	else if((key == SDLK_RETURN || key == SDLK_KP_ENTER) && isNewPress && choice < static_cast<int>(choices.size()))
 		Goto(conversation.NextNodeForChoice(node, MapChoice(choice)), choice);
-	else if(key >= '1' && key < static_cast<SDL_Keycode>('1' + choices.size()))
-		Goto(conversation.NextNodeForChoice(node, MapChoice(key - '1')), key - '1');
-	else if(key >= SDLK_KP_1 && key < static_cast<SDL_Keycode>(SDLK_KP_1 + choices.size()))
-		Goto(conversation.NextNodeForChoice(node, MapChoice(key - SDLK_KP_1)), key - SDLK_KP_1);
+	else if(number >= 0 && number <= static_cast<int>(choices.size()))
+		Goto(conversation.NextNodeForChoice(node, MapChoice(number)), number);
 	else
 		return false;
 
 	return true;
+}
+
+
+
+int ConversationPanel::NumberChoice(SDL_Keycode key)
+{
+	switch(key)
+	{
+		case(SDLK_0, SDLK_KP_0):
+			return 0;
+		case(SDLK_1, SDLK_KP_1):
+			return 1;
+		case(SDLK_2, SDLK_KP_2):
+			return 2;
+		case(SDLK_3, SDLK_KP_3):
+			return 3;
+		case(SDLK_4, SDLK_KP_4):
+			return 4;
+		case(SDLK_5, SDLK_KP_5):
+			return 5;
+		case(SDLK_6, SDLK_KP_6):
+			return 6;
+		case(SDLK_7, SDLK_KP_7):
+			return 7;
+		case(SDLK_8, SDLK_KP_8):
+			return 8;
+		case(SDLK_9, SDLK_KP_9):
+			return 9;
+		default:
+			return -1;
+	};
 }
 
 
