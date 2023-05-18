@@ -2144,9 +2144,11 @@ void PlayerInfo::HandleEvent(const ShipEvent &event, UI *ui)
 
 
 
-void PlayerInfo::TriggerMission(const std::string &name)
+void PlayerInfo::TriggerMission(ExplicitMissionTrigger &triggerMe)
 {
-	const Mission *mission = GameData::Missions().Find(name);
+	triggerMe.Localize(*this);
+	const std::string &name = triggerMe.GetName();
+	const Mission *toTrigger = GameData::Missions().Find(name);
 	if(!mission)
 		Logger::LogError("In explicit mission trigger, no mission was found with name `" + name + '`');
 	else if(!mission->CanOffer(*this))
@@ -2154,7 +2156,7 @@ void PlayerInfo::TriggerMission(const std::string &name)
 	else
 	{
 		list<Mission> unitList;
-		unitList.push_back(mission->Instantiate(*this, nullptr));
+		unitList.push_back(mission->Instantiate(*this, nullptr, triggerMe));
 		Mission &mission = unitList.back();
 		if(!mission.IsValid())
 			Logger::LogError("In explicit mission trigger, mission was invalid. Name: `" + name + '`');

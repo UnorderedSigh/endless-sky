@@ -23,6 +23,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 class ConditionSet;
 class ConditionsStore;
 class DataNode;
+class DataWriter;
 class PlayerInfo;
 
 
@@ -34,8 +35,9 @@ class PlayerInfo;
 // by a ConditionSet.
 class TextReplacements {
 public:
-	// Load a substitutions node.
+	// Load or save a substitutions node.
 	void Load(const DataNode &node);
+	void Save(DataWriter &out) const;
 
 	// Clear this TextReplacement's substitutions and insert the substitutions of other.
 	void Revert(TextReplacements &other);
@@ -44,6 +46,11 @@ public:
 	// This TextReplacements will overwrite the value of any existing keys in the given map
 	// if the map and this TextReplacements share a key.
 	void Substitutions(std::map<std::string, std::string> &subs, const ConditionsStore &conditions) const;
+
+	// Returns a copy of this, after expanding substitution values with subs. Also expands ${phrases} if requested.
+	TextReplacements ApplySubstitutions(std::map<std::string, std::string> &subs, bool applyPhrases = true) const;
+
+	bool IsEmpty() const;
 
 
 private:

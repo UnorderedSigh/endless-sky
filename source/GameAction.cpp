@@ -211,7 +211,7 @@ void GameAction::LoadSingle(const DataNode &child, const string &missionName)
 			fail.insert(toFail);
 	}
 	else if(child.Size() == 3 && key == "trigger" && child.Token(1) == "mission")
-		missions.emplace_back(child.Token(2), ConditionSet(child));
+		missions.emplace_back(child);
 	else
 		conditions.Add(child);
 }
@@ -372,9 +372,9 @@ void GameAction::Do(PlayerInfo &player, UI *ui, bool allowTriggeringMissions) co
 	conditions.Apply(player.Conditions());
 
 	if(allowTriggeringMissions)
-		for(auto &nameCondition : missions)
-			if(nameCondition.second.Test(player.Conditions()))
-				player.TriggerMission(nameCondition.first);
+		for(auto &mission : missions)
+			if(mission.IsValid() && mission.CanTrigger(player.Conditions()))
+				player.TriggerMission(mission);
 }
 
 

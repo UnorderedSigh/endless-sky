@@ -19,6 +19,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "ConditionSet.h"
 
 #include <cstdint>
+#include <list>
 #include <map>
 #include <set>
 #include <string>
@@ -80,7 +81,7 @@ private:
 	std::map<const GameEvent *, std::pair<int, int>> events;
 	std::vector<std::pair<const Ship *, std::string>> giftShips;
 	std::map<const Outfit *, int> giftOutfits;
-	std::vector<std::pair<std::string, ConditionSet>> missions;
+	std::list<ExplicitMissionTrigger> missions;
 
 	int64_t payment = 0;
 	int64_t paymentMultiplier = 0;

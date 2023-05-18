@@ -33,6 +33,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 class DataNode;
 class DataWriter;
+class ExplicitMissionTrigger;
 class Planet;
 class PlayerInfo;
 class Ship;
@@ -180,7 +181,8 @@ public:
 
 	// "Instantiate" a mission by replacing randomly selected values and places
 	// with a single choice, and then replacing any wildcard text as well.
-	Mission Instantiate(const PlayerInfo &player, const std::shared_ptr<Ship> &boardingShip = nullptr) const;
+	Mission Instantiate(const PlayerInfo &player, const std::shared_ptr<Ship> &boardingShip = nullptr,
+		const ExplicitMissionTrigger *overrides = nullptr) const;
 
 
 private:

@@ -745,6 +745,8 @@ bool Mission::CanOffer(const PlayerInfo &player, const shared_ptr<Ship> &boardin
 		if(!sourceFilter.Matches(*boardingShip))
 			return false;
 	}
+	else if(location == EXPLICIT && !sourceFilter.IsEmpty() && !sourceFilter.Matches(player.GetPlanet()))
+		return false;
 	else
 	{
 		if(source && source != player.GetPlanet())
@@ -1205,7 +1207,8 @@ const MissionAction &Mission::GetAction(Trigger trigger) const
 
 // "Instantiate" a mission by replacing randomly selected values and places
 // with a single choice, and then replacing any wildcard text as well.
-Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &boardingShip) const
+Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &boardingShip,
+		const ExplicitMissionTrigger &overrides) const
 {
 	Mission result;
 	// If anything goes wrong below, this mission should not be offered.
@@ -1256,7 +1259,8 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 
 	// If a specific destination is not specified in the mission, pick a random
 	// one out of all the destinations that satisfy the mission requirements.
-	result.destination = destination;
+	const Planet * overrideDestination = overrides ? overrides.GetDestination() : nullptr;
+	result.destination = overrideDestination ? overrideDestination : destination;
 	if(!result.destination && !destinationFilter.IsEmpty())
 	{
 		result.destination = destinationFilter.PickPlanet(sourceSystem, ignoreClearance || !clearance.empty());
@@ -1345,6 +1349,8 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 	map<string, string> subs;
 	GameData::GetTextReplacements().Substitutions(subs, player.Conditions());
 	substitutions.Substitutions(subs, player.Conditions());
+	if(overrides)
+		overrides.GetSubstitutions().Substitutions(subs, player.Conditions());
 	subs["<commodity>"] = result.cargo;
 	subs["<tons>"] = Format::MassString(result.cargoSize);
 	subs["<cargo>"] = Format::CargoString(result.cargoSize, subs["<commodity>"]);

@@ -18,6 +18,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 #include "ConditionSet.h"
 #include "ConditionsStore.h"
 #include "DataNode.h"
+#include "DataWriter.h"
 #include "PlayerInfo.h"
 
 #include <set>
@@ -71,6 +72,23 @@ void TextReplacements::Load(const DataNode &node)
 
 
 
+void TextReplacements::Save(DataWriter &out) const
+{
+	for(auto &sub : substitutions)
+	{
+		out.Write(sub.first, sub.second.second);
+		const ConditionSet &toSub = sub.second.first;
+		if(!toSub.IsEmpty())
+		{
+			out.BeginChild();
+			toSub.Save(out);
+			out.EndChild();
+		}
+	}
+}
+
+
+
 // Clear this TextReplacement's substitutions and insert the substitutions of other.
 void TextReplacements::Revert(TextReplacements &other)
 {
@@ -93,4 +111,21 @@ void TextReplacements::Substitutions(map<string, string> &subs, const Conditions
 		if(toSub.Test(conditions))
 			subs[key] = replacement;
 	}
+}
+
+
+
+TextReplacements TextReplacements::ApplySubstitutions(map<string, string> &subs) const
+{
+	TextReplacements result;
+	for(const auto &sub : substitutions)
+		result.substitutions.emplace_back(sub.first,
+			make_pair(Format::Replace(Phrase::ExpandPhrases(sub.second.first), subs), sub.second.second));
+}
+
+
+
+bool TextReplacements::IsEmpty() const
+{
+	return substitutions.empty();
 }
