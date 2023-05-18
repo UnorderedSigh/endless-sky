@@ -224,6 +224,8 @@ void Mission::Load(const DataNode &node)
 			location = SHIPYARD;
 		else if(child.Token(0) == "outfitter")
 			location = OUTFITTER;
+		else if(child.Token(0) == "explicit")
+			location = EXPLICIT;
 		else if(child.Token(0) == "repeat")
 			repeat = (child.Size() == 1 ? 0 : static_cast<int>(child.Value(1)));
 		else if(child.Token(0) == "clearance")
@@ -380,6 +382,8 @@ void Mission::Save(DataWriter &out, const string &tag) const
 				out.EndChild();
 			}
 		}
+		if(location == EXPLICIT)
+			out.Write("explicit");
 		if(location == JOB)
 			out.Write("job");
 		if(!clearance.empty())
@@ -988,7 +992,7 @@ bool Mission::IsUnique() const
 // When the state of this mission changes, it may make changes to the player
 // information or show new UI panels. PlayerInfo::MissionCallback() will be
 // used as the callback for any UI panel that returns a value.
-bool Mission::Do(Trigger trigger, PlayerInfo &player, UI *ui, const shared_ptr<Ship> &boardingShip)
+bool Mission::Do(Trigger trigger, PlayerInfo &player, UI *ui, const shared_ptr<Ship> &boardingShip, bool allowTriggeringMissions)
 {
 	if(trigger == STOPOVER)
 	{
@@ -1077,7 +1081,8 @@ bool Mission::Do(Trigger trigger, PlayerInfo &player, UI *ui, const shared_ptr<S
 	// mission dialog or conversation. Invisible missions don't show this
 	// marker.
 	if(it != actions.end())
-		it->second.Do(player, ui, (destination && isVisible) ? destination->GetSystem() : nullptr, boardingShip, IsUnique());
+		it->second.Do(player, ui, (destination && isVisible) ? destination->GetSystem() : nullptr, boardingShip,
+			IsUnique(), allowTriggeringMissions);
 	else if(trigger == OFFER && location != JOB)
 		player.MissionCallback(Conversation::ACCEPT);
 

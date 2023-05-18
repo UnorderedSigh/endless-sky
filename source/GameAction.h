@@ -31,6 +31,7 @@ class GameEvent;
 class Outfit;
 class PlayerInfo;
 class Ship;
+class TextReplacements;
 class UI;
 
 
@@ -64,7 +65,7 @@ public:
 	const std::map<const Outfit *, int> &Outfits() const noexcept;
 
 	// Perform this action.
-	void Do(PlayerInfo &player, UI *ui) const;
+	void Do(PlayerInfo &player, UI *ui, bool allowTriggeringMissions = true) const;
 
 	// "Instantiate" this action by filling in the wildcard data for the actual
 	// payment, event delay, etc.
@@ -79,6 +80,7 @@ private:
 	std::map<const GameEvent *, std::pair<int, int>> events;
 	std::vector<std::pair<const Ship *, std::string>> giftShips;
 	std::map<const Outfit *, int> giftOutfits;
+	std::vector<std::pair<std::string, ConditionSet>> missions;
 
 	int64_t payment = 0;
 	int64_t paymentMultiplier = 0;

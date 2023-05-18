@@ -282,7 +282,7 @@ bool MissionAction::CanBeDone(const PlayerInfo &player, const shared_ptr<Ship> &
 
 
 void MissionAction::Do(PlayerInfo &player, UI *ui, const System *destination,
-	const shared_ptr<Ship> &ship, const bool isUnique) const
+	const shared_ptr<Ship> &ship, const bool isUnique, const bool allowTriggeringMissions) const
 {
 	bool isOffer = (trigger == "offer");
 	if(!conversation->IsEmpty() && ui)
@@ -321,7 +321,7 @@ void MissionAction::Do(PlayerInfo &player, UI *ui, const System *destination,
 	else if(isOffer && ui)
 		player.MissionCallback(Conversation::ACCEPT);
 
-	action.Do(player, ui);
+	action.Do(player, ui, allowTriggeringMissions);
 }
 
 

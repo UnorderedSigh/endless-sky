@@ -2144,6 +2144,42 @@ void PlayerInfo::HandleEvent(const ShipEvent &event, UI *ui)
 
 
 
+void PlayerInfo::TriggerMission(const std::string &name)
+{
+	const Mission *mission = GameData::Missions().Find(name);
+	if(!mission)
+		Logger::LogError("In explicit mission trigger, no mission was found with name `" + name + '`');
+	else if(!mission->CanOffer(*this))
+		Logger::LogError("In explicit mission trigger, mission \"can offer\" failed. Name: `" + name + '`');
+	else
+	{
+		list<Mission> unitList;
+		unitList.push_back(mission->Instantiate(*this, nullptr));
+		Mission &mission = unitList.back();
+		if(!mission.IsValid())
+			Logger::LogError("In explicit mission trigger, mission was invalid. Name: `" + name + '`');
+		else
+		{
+			// Prevent infinite recursion by banning dialogs, conversations, and explicit mission triggers
+			// when explicitly triggering a mission. That's the "nullptr, false" parts.
+			mission.Do(Mission::OFFER, *this, nullptr, nullptr, false);
+
+			// Unlike ordinary missions, an explicitly triggered mission that fails on offer will never
+			// be stored. This lets them be cheaply used as conditional branches to subroutines.
+			if(mission.HasFailed(*this))
+				mission.Do(Mission::FAIL, *this, nullptr, nullptr, false);
+			else
+			{
+				mission.Do(Mission::ACCEPT, *this, nullptr, nullptr, false);
+				auto spliceIt = mission.IsUnique() ? missions.begin() : missions.end();
+				missions.splice(spliceIt, unitList, unitList.begin());
+			}
+		}
+	}
+}
+
+
+
 // Get mutable access to the player's list of conditions.
 ConditionsStore &PlayerInfo::Conditions()
 {

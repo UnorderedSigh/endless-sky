@@ -210,6 +210,8 @@ void GameAction::LoadSingle(const DataNode &child, const string &missionName)
 		else
 			fail.insert(toFail);
 	}
+	else if(child.Size() == 3 && key == "trigger" && child.Token(1) == "mission")
+		missions.emplace_back(child.Token(2), ConditionSet(child));
 	else
 		conditions.Add(child);
 }
@@ -315,7 +317,7 @@ const map<const Outfit *, int> &GameAction::Outfits() const noexcept
 
 
 // Perform the specified tasks.
-void GameAction::Do(PlayerInfo &player, UI *ui) const
+void GameAction::Do(PlayerInfo &player, UI *ui, bool allowTriggeringMissions) const
 {
 	if(!logText.empty())
 		player.AddLogEntry(logText);
@@ -368,6 +370,11 @@ void GameAction::Do(PlayerInfo &player, UI *ui) const
 
 	// Check if applying the conditions changes the player's reputations.
 	conditions.Apply(player.Conditions());
+
+	if(allowTriggeringMissions)
+		for(auto &nameCondition : missions)
+			if(nameCondition.second.Test(player.Conditions()))
+				player.TriggerMission(nameCondition.first);
 }
 
 
@@ -407,6 +414,9 @@ GameAction GameAction::Instantiate(map<string, string> &subs, int jumps, int pay
 	result.fail = fail;
 
 	result.conditions = conditions;
+
+	for(auto &nameCondition : missions)
+		result.missions.emplace_back(Format::Replace(Phrase::ExpandPhrases(nameCondition.first), subs), nameCondition.second);
 
 	return result;
 }

@@ -241,6 +241,8 @@ public:
 	void FailMission(const Mission &mission);
 	// Update mission status based on an event.
 	void HandleEvent(const ShipEvent &event, UI *ui);
+	// Explicitly trigger a mission by name.
+	void TriggerMission(const std::string &name);
 
 	// Access the "condition" flags for this player.
 	ConditionsStore &Conditions();
