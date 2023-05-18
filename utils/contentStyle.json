@@ -27,7 +27,7 @@
 				]
 			},
 			{
-				"holder": "^# No copyright.*edicated to the public domain.*by.*$",
+				"holder": "^# .*[Nn]o copyright.*edicated to the public domain.*by.*$",
 				"notice": [
 					"#",
 					"# The person who associated a work with this deed has dedicated the",
