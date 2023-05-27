@@ -113,3 +113,73 @@ news "wanderer at kor efret spaceport"
 			"It is [disheartening, upsetting] to see how damaged this world is, but I take comfort knowing we will work to [restore, rebirth] it."
 		word
 			`"`
+
+news "Korath raider justifying raids"
+	to show
+		has "language: Korath"
+	location
+		attributes "korath exile"
+		not attributes uninhabited humanika
+	name
+		word
+			"Korath raiding captain"
+			"Korath turret gunner"
+			"Korath weapons engineer"
+			"Korath raider"
+			"Korath fighter pilot"
+	message
+		word
+			`"`
+		word
+			`The most sacrosanct right is the right to be oneself, a right your people do not [honor, uphold]. Even the Hai, when in the depths of colonialist depravity, don't allow someone to own a person. How can we respect the lives of a people that don't respect their own?`
+			`We gain nothing from a raid when the [donor, gifting] ship is destroyed. Humanika must strive to make better armor.`
+			`Slavers are the most loathsome creatures. I gain great [joy, fulfillment] watching their ships explode.`
+			`Of all the [bounty, gifts] we get from your ships, I like ${Korath human delectables} the best.`
+			`When I feel guilty about [raiding, harvesting], I think of my starving family, and the guilt suddenly passes.`
+			`When our raid [steals, procures] a shipment of ${Korath human bulk food bounty that is perishable} that spoils in transit, we compost it in our aquaponics. Such a shame, though. Humanika food is delicious.`
+			`Do I feel guilty for [raiding, harvesting]? No, I feel hungry.`
+			`We use heat weapons to overheat your ships instead of destroying them. This increases our [yields, profit margins]. A live Humani will come back with more to [raid, harvest].`
+			`Why must your pirates swarm our ships? Our damaged vessels will [retreat, desist] if you let them.`
+			`Between raids, I [hone, practice] my sculpting skills. I can create lifelike statues of Korath at one quarter scale.`
+			`I [raid, harvest] Humanika ships, just like my parents before me. Each generation feeds the next, whatever way they can.`
+			`If we [trade, parley] peacefully instead, will your people enslave us as they enslave each other?`
+			`Why are so many Humanika ships elongated or triangular? Show some [style, self-expression]!`
+			`When a Humanika ship [dumps, gifts] two hundred tons of ${Korath human delectables} into space, we are overjoyed and let it go without a fight.`
+			`Humanika freighter crews let us [board, parley] to help with an infestation. ${Infestation that Korath enjoyed eating} is quite a feast for a raiding crew.`
+			`Most Humanika weapons are [cute, lively] toys, but some of them push ship, stopping from jumping.`
+			`The pain from nerve gas is excruciating and we linger for hours [hoping, wishing] to die.`
+			`We know Humanika history. You make the same mistakes over and over, but you overcome the [hardships, obstacles] you create for yourself. Korath are not obstacles. We are just hungry. I wish there was a better way than [raiding, harvesting] your ships.`
+			`Please bring us food so we can [raid, harvest] Humanika ships less.`
+			`A Humanika pirate ship had a cargo hold of ${Korath human delectables} they [raided, harvested] from merchants. We [raided, harvested] it from them! There's always a bigger fish, Humanika.`
+		word
+			`"`
+
+news "Korath nursery or hatchery worker"
+	to show
+		has "language: Korath"
+	location
+		attributes "korath exile"
+		not attributes uninhabited humanika
+	name
+		word
+			"Korath incubation worker"
+			"Korath nanny"
+			"Korath pediatrician"
+			"Korath nursery worker"
+			"Korath nursery worker"
+			"Korath child minder"
+			"Korath nursemaid"
+	message
+		word
+			`"`
+		word
+			`Korath children are our immortality. Their survival lets our [racial memory, gestalt] linger on.`
+			`I'm a father and a mother. Now, I have the privilege of being an [egg tender, asexual, third parent].`
+			`[Caring for, incubating] our eggs and hatchlings is the most fulfilling occupation.`
+			`We are fortunate not to have pregnancy or live birth. It lets us escape the [chaos, misfortune] that would unfold from our female crew being pregnant.`
+			`Eggs are the most vulnerable Korath, but they are also the most innocent. Even our [opponents, rivals] to the south protect our hatchery ships.`
+			`What would Humanika pirates do with Korath eggs? Eat them alive? Hatch them and enslave the child? I shudder to think of it.`
+			`Did you know a Korath can love? I [tend, incubate] many young, and I love them all.`
+			``
+		word
+			`"`

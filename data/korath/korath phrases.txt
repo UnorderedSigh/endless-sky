@@ -1,0 +1,126 @@
+# Copyright (c) 2020 by an anonymous author and Lia Gerty (Ravenshining)
+#
+# Endless Sky is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# Endless Sky is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
+
+phrase "Infestation that Korath enjoyed eating"
+	word
+		"Seven tons of "
+		"Vast swarms of"
+		"Nineteen tons of "
+		"Five tons of "
+	word
+		"rats"
+		"cockroaches"
+		"flies"
+		"mice"
+		"spiders"
+		"centipedes"
+		"ants"
+
+phrase "Korath human bulk food bounty that is perishable"
+	word
+		"fish"
+		"crops"
+		"fruit"
+		"vegetables"
+		"MREs"
+		"frozen food"
+		"meat"
+		"eggs"
+
+phrase "Korath human delectables"
+	phrase
+		"Korath human delectables: whole creatures or eggs (plural)" 5
+		"Korath human delectables: plants or parts thereof (plural)" 5
+		"Korath human delectables: processed or prepared foods and animal byproducts (plural)" 3
+
+phrase "Korath human delectables: whole creatures or eggs (plural)"
+	word
+		"squid" 10
+		"beetles" 10
+		"snakes" 5
+		"ants" 5
+		"slugs" 5
+		"calamari" 20
+		"cows" 10
+		"pigs" 10
+		"chickens" 10
+		"eggs" 10
+		"octopuses" 20
+		"frogs" 5
+		"poodles" 5
+		"hornworm larvae" 5
+		"rats" 10
+		"mice" 5
+		"kiwi birds" 5
+		"crickets" 5
+		"roaches" 5
+		"fruit flies" 5
+		"earthworms" 5
+
+		# Korath like fish the most:
+		"salmon" 20
+		"fish" 20
+		"sole" 20
+		"cod" 20
+		"sea bass" 20
+
+phrase "Korath human delectables: plants or parts thereof (plural)"
+	word
+		"chili peppers" 5
+		"yellow squash" 5
+		"honeydew melons" 5
+		"strawberries" 5
+		"oranges" 5
+		"apples" 5
+		"celery" 5
+		"blueberries" 5
+		"grapes" 5
+		"acorn squash" 5
+		"carrots" 5
+		"okra" 5
+		"bell peppers" 5
+		"asparagus" 5
+		"macadamia nuts" 5
+		"kiwi fruit" 5
+		"oats" 5
+		"brown rice" 5
+		"mangoes" 5
+
+		# Korath are quite fond of greens
+		"lettuce" 10
+		"cabbage" 10
+		"turnip greens" 10
+		"collard greens" 10
+		"dandelion greens" 10
+		"kale" 10
+		"basil" 10
+		"bok choi" 10
+		"spinach" 10
+		"oregano" 10
+
+phrase "Korath human delectables: processed or prepared foods and animal byproducts (plural)"
+	word
+		"fish sticks" 10
+		"maki sushi" 10
+		"Uramaki" 10
+		"MREs" 5
+		"cat patties" 5
+		"pill pockets" 5
+		"pot pies" 5
+		"ice cream" 5
+		"burgers" 5
+		"yogurt" 5
+		"cheese" 5
+		"chili dogs" 5
+		"baby food" 5
+		"honey" 5
