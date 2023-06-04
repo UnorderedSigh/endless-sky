@@ -107,20 +107,24 @@ namespace {
 		return (d > maximum) ? -1 : d;
 	}
 
-	// Check that at least one neighbor of the hub system matches, for each of the neighbor filters.
-	// False if at least one filter fails to match, true if all filters find at least one match.
-	bool MatchesNeighborFilters(const list<LocationFilter> &neighborFilters, const System *hub, const System *origin)
+	// Check that the specified numeric range of neighbors of the hub system matches, for each of the neighbor filters.
+	// When the minimum count is negative, this means all must match (minimum = infinity)
+	// When the maximum count is negative, then only the minimum count is used.
+	bool MatchesNeighborFilters(const list<NeighborRangeFilter> &neighborFilters, const System *hub, const System *origin)
 	{
-		for(const LocationFilter &filter : neighborFilters)
+		for(const NeighborRangeFilter &filter : neighborFilters)
 		{
-			bool hasMatch = false;
+			int matchCount = 0;
 			for(const System *neighbor : hub->Links())
-				if(filter.Matches(neighbor, origin))
-				{
-					hasMatch = true;
-					break;
-				}
-			if(!hasMatch)
+			{
+				bool match = filter.filter.Matches(neighbor, origin);
+				if(filter.minCount < 0 && !match)
+					return false;
+				matchCount += match;
+				if(filter.maxCount >= 0 && matchCount > filter.maxCount)
+					return false;
+			}
+			if(matchCount < filter.minCount)
 				return false;
 		}
 		return true;
@@ -176,14 +180,27 @@ void LocationFilter::Load(const DataNode &node)
 		// neighboring system. If the token is alone on a line, it
 		// introduces many lines of this type of filter. Otherwise, this
 		// child is a normal LocationFilter line.
-		if(child.Token(0) == "not" || child.Token(0) == "neighbor")
+		if(child.Token(0) == "not")
 		{
-			list<LocationFilter> &filters = ((child.Token(0) == "not") ? notFilters : neighborFilters);
-			filters.emplace_back();
+			notFilters.emplace_back();
 			if(child.Size() == 1)
-				filters.back().Load(child);
+				notFilters.back().Load(child);
 			else
-				filters.back().LoadChild(child);
+				notFilters.back().LoadChild(child);
+		}
+		else if(child.Token(0) == "neighbor" && child.Size() > 1 && !child.IsValue(1))
+		{
+			neighborFilters.emplace_back();
+			neighborFilters.back().filter.LoadChild(child);
+		}
+		else if(child.Token(0) == "neighbor")
+		{
+			neighborFilters.emplace_back();
+			neighborFilters.back().filter.Load(child);
+			bool hasMin = child.Size() > 2;
+			if(hasMin)
+				notFilters.back().minCount = child.Value(1);
+			notFilters.back().maxCount = child.Value(hasMin + 1);
 		}
 		else
 			LoadChild(child);
@@ -205,9 +222,14 @@ void LocationFilter::Save(DataWriter &out) const
 			out.Write("not");
 			filter.Save(out);
 		}
-		for(const LocationFilter &filter : neighborFilters)
+		for(const NeighborRangeFilter &filter : neighborFilters)
 		{
-			out.Write("neighbor");
+			if(filter.minCount != 1)
+				out.Write("neighbor", filter.minCount, filter.maxCount);
+			else if(filter.maxCount != -1)
+				out.Write("neighbor", filter.maxCount);
+			else
+				out.Write("neighbor");
 			filter.Save(out);
 		}
 		if(!planets.empty())

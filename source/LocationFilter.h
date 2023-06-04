@@ -37,6 +37,14 @@ class System;
 // have a certain attribute or be owned by a certain government, or be a
 // certain distance away from the current system.
 class LocationFilter {
+private:
+	struct NeighborRangeFilter {
+		int minCount = 1;
+		int maxCount = 0;
+		LocationFilter filter;
+	};
+
+
 public:
 	LocationFilter() noexcept = default;
 	// Construct and Load() at the same time.
@@ -107,7 +115,7 @@ private:
 	// These filters store all the things the planet, system, or ship must not be.
 	std::list<LocationFilter> notFilters;
 	// These filters store all the things the planet or system must border.
-	std::list<LocationFilter> neighborFilters;
+	std::list<NeighborRangeFilter> neighborFilters;
 };
 
 
