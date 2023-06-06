@@ -78,8 +78,10 @@ public:
 
 	bool IsValid() const;
 	// Get this system's name and position (in the star map).
-	const std::string &Name() const;
-	void SetName(const std::string &name);
+	const std::string &TrueName() const;
+	void SetTrueName(const std::string &name);
+	const std::string &DisplayName() const;
+	void SetDisplayName(const std::string &name);
 	const Point &Position() const;
 	// Get this system's government.
 	const Government *GetGovernment() const;
@@ -200,7 +202,8 @@ private:
 	bool isDefined = false;
 	bool hasPosition = false;
 	// Name and position (within the star map) of this system.
-	std::string name;
+	std::string trueName;
+	std::string displayName;
 	Point position;
 	const Government *government = nullptr;
 	std::string music;

@@ -101,7 +101,7 @@ namespace {
 			return false;
 		else if(rhs->GetSystem() == nullptr)
 			return true;
-		return lhs->GetSystem()->Name() < rhs->GetSystem()->Name();
+		return lhs->GetSystem()->TrueName() < rhs->GetSystem()->TrueName();
 	}
 
 	bool CompareShields(const shared_ptr<Ship> &lhs, const shared_ptr<Ship> &rhs)
@@ -763,7 +763,7 @@ void PlayerInfoPanel::DrawFleet(const Rectangle &bounds)
 		table.Draw(ship.ModelName());
 
 		const System *system = ship.GetSystem();
-		table.Draw(system ? system->Name() : "");
+		table.Draw(system ? system->DisplayName() : "");
 
 		string shields = to_string(static_cast<int>(100. * max(0., ship.Shields()))) + "%";
 		table.Draw(shields);

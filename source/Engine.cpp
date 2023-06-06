@@ -682,7 +682,7 @@ void Engine::Step(bool isActive)
 		info.SetSprite("player sprite", flagship->GetSprite(), shipFacingUnit, flagship->GetFrame(step));
 	}
 	if(currentSystem)
-		info.SetString("location", currentSystem->Name());
+		info.SetString("location", currentSystem->DisplayName());
 	info.SetString("date", player.GetDate().ToString());
 	if(flagship)
 	{
@@ -733,7 +733,7 @@ void Engine::Step(bool isActive)
 	{
 		info.SetString("navigation mode", "Hyperspace:");
 		if(player.HasVisited(*flagship->GetTargetSystem()))
-			info.SetString("destination", flagship->GetTargetSystem()->Name());
+			info.SetString("destination", flagship->GetTargetSystem()->DisplayName());
 		else
 			info.SetString("destination", "unexplored system");
 	}
@@ -1238,7 +1238,7 @@ void Engine::EnterSystem()
 	Audio::PlayMusic(system->MusicName());
 	GameData::SetHaze(system->Haze(), false);
 
-	Messages::Add("Entering the " + system->Name() + " system on "
+	Messages::Add("Entering the " + system->DisplayName() + " system on "
 		+ today.ToString() + (system->IsInhabited(flagship) ?
 			"." : ". No inhabited planets detected."), Messages::Importance::High);
 

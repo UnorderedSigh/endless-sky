@@ -226,7 +226,7 @@ void LocationFilter::Save(DataWriter &out) const
 			out.BeginChild();
 			{
 				for(const System *system : systems)
-					out.Write(system->Name());
+					out.Write(system->TrueName());
 			}
 			out.EndChild();
 		}
@@ -271,7 +271,7 @@ void LocationFilter::Save(DataWriter &out) const
 			out.EndChild();
 		}
 		if(center)
-			out.Write("near", center->Name(), centerMinDistance, centerMaxDistance);
+			out.Write("near", center->TrueName(), centerMinDistance, centerMaxDistance);
 	}
 	out.EndChild();
 }

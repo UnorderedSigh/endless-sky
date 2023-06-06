@@ -435,9 +435,9 @@ void Mission::Save(DataWriter &out, const string &tag) const
 		if(destination)
 			out.Write("destination", destination->Name());
 		for(const System *system : waypoints)
-			out.Write("waypoint", system->Name());
+			out.Write("waypoint", system->TrueName());
 		for(const System *system : visitedWaypoints)
-			out.Write("waypoint", system->Name(), "visited");
+			out.Write("waypoint", system->TrueName(), "visited");
 
 		for(const Planet *planet : stopovers)
 			out.Write("stopover", planet->TrueName());
@@ -1351,7 +1351,7 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 	else if(boardingShip)
 		subs["<origin>"] = boardingShip->Name();
 	subs["<planet>"] = result.destination ? result.destination->Name() : "";
-	subs["<system>"] = result.destination ? result.destination->GetSystem()->Name() : "";
+	subs["<system>"] = result.destination ? result.destination->GetSystem()->DisplayName() : "";
 	subs["<destination>"] = subs["<planet>"] + " in the " + subs["<system>"] + " system";
 	subs["<date>"] = result.deadline.ToString();
 	subs["<day>"] = result.deadline.LongString();
@@ -1374,7 +1374,7 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 				stopovers += result;
 				planets += result;
 			}
-			stopovers += planet->Name() + " in the " + planet->GetSystem()->Name() + " system";
+			stopovers += planet->Name() + " in the " + planet->GetSystem()->DisplayName() + " system";
 			planets += planet->Name();
 		}
 		subs["<stopovers>"] = stopovers;
@@ -1390,7 +1390,7 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 		{
 			if(count++)
 				systems += (&system != last) ? ", " : (count > 2 ? ", and " : " and ");
-			systems += system->Name();
+			systems += system->DisplayName();
 		}
 		subs["<waypoints>"] = systems;
 	}
@@ -1435,7 +1435,7 @@ Mission Mission::Instantiate(const PlayerInfo &player, const shared_ptr<Ship> &b
 	}
 	if(oit != onEnter.end())
 	{
-		Logger::LogError("Instantiation Error: Action \"on enter '" + oit->first->Name() + "'\" in mission \""
+		Logger::LogError("Instantiation Error: Action \"on enter '" + oit->first->DisplayName() + "'\" in mission \""
 			+ Identifier() + "\" uses invalid " + std::move(reason));
 		return result;
 	}

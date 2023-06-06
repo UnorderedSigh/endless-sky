@@ -669,7 +669,7 @@ void MissionPanel::DrawSelectedSystem() const
 	if(!player.KnowsName(*selectedSystem))
 		text = "Selected system: unexplored system";
 	else
-		text = "Selected system: " + selectedSystem->Name();
+		text = "Selected system: " + selectedSystem->DisplayName();
 
 	int jumps = 0;
 	const vector<const System *> &plan = player.TravelPlan();

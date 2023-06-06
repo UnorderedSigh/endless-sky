@@ -95,8 +95,10 @@ void System::Load(const DataNode &node, Set<Planet> &planets)
 {
 	if(node.Size() < 2)
 		return;
-	name = node.Token(1);
+	trueName = node.Token(1);
 	isDefined = true;
+	if(displayName.empty())
+		displayName = trueName;
 
 	// For the following keys, if this data node defines a new value for that
 	// key, the old values should be cleared (unless using the "add" keyword).
@@ -135,6 +137,8 @@ void System::Load(const DataNode &node, Set<Planet> &planets)
 			// Clear the data of the given type.
 			if(key == "government")
 				government = nullptr;
+			else if(key == "name")
+				displayName = trueName;
 			else if(key == "music")
 				music.clear();
 			else if(key == "attributes")
@@ -204,12 +208,20 @@ void System::Load(const DataNode &node, Set<Planet> &planets)
 					child.PrintTrace("Skipping unrecognized attribute:");
 			}
 		}
+		// Removing a name does not require specifying the name.
+		else if(remove && key == "name")
+			displayName = trueName;
 		else if(!hasValue && key != "object")
 		{
 			child.PrintTrace("Error: Expected key to have a value:");
 			continue;
 		}
 		// Handle the attributes which can be "removed."
+		else if(key == "name")
+		{
+			displayName = child.Token(valueIndex);
+			fprintf(stderr, "System::Load: system \"%s\" name \"%s\"\n", trueName.c_str(), displayName.c_str());
+		}
 		else if(key == "attributes")
 		{
 			if(remove)
@@ -552,16 +564,32 @@ bool System::IsValid() const
 
 
 // Get this system's name.
-const string &System::Name() const
+const string &System::TrueName() const
 {
-	return name;
+	return trueName;
 }
 
 
 
-void System::SetName(const std::string &name)
+void System::SetTrueName(const std::string &name)
 {
-	this->name = name;
+	trueName = name;
+	if(displayName.empty())
+		displayName = trueName;
+}
+
+
+
+const string &System::DisplayName() const
+{
+	return displayName;
+}
+
+
+
+void System::SetDisplayName(const std::string &name)
+{
+	displayName = !name.empty() ? name : trueName;
 }
 
 
@@ -1042,7 +1070,7 @@ void System::UpdateNeighbors(const Set<System> &systems, double distance)
 	{
 		const System &other = it.second;
 		// Skip systems that have no name or that are inaccessible.
-		if(it.first.empty() || other.Name().empty() || other.Inaccessible())
+		if(it.first.empty() || other.TrueName().empty() || other.Inaccessible())
 			continue;
 
 		if(&other != this && other.Position().Distance(position) <= distance)

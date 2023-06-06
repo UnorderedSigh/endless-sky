@@ -190,7 +190,7 @@ void StartConditions::FinishLoading()
 	// of what was displayed.
 	StartInfo &unlocked = infoByState[StartState::UNLOCKED];
 	unlocked.planet = GetPlanet().Name();
-	unlocked.system = GetSystem().Name();
+	unlocked.system = GetSystem().DisplayName();
 	unlocked.date = GetDate().ToString();
 	unlocked.credits = Format::Credits(GetAccounts().Credits());
 	unlocked.debt = Format::Credits(GetAccounts().TotalDebt());

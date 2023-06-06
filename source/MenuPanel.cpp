@@ -127,7 +127,7 @@ void MenuPanel::Draw()
 			info.SetString("ship", flagship.Name());
 		}
 		if(player.GetSystem())
-			info.SetString("system", player.GetSystem()->Name());
+			info.SetString("system", player.GetSystem()->DisplayName());
 		if(player.GetPlanet())
 			info.SetString("planet", player.GetPlanet()->Name());
 		info.SetString("credits", Format::Credits(player.Accounts().Credits()));

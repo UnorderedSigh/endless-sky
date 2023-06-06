@@ -280,7 +280,7 @@ void Fleet::Enter(const System &system, list<shared_ptr<Ship>> &ships, const Pla
 		{
 			// Log this error.
 			Logger::LogError("Fleet::Enter: Unable to find valid stellar object for planet \""
-				+ planet->TrueName() + "\" in system \"" + system.Name() + "\"");
+				+ planet->TrueName() + "\" in system \"" + system.DisplayName() + "\"");
 			return;
 		}
 		// To take off from the planet, all non-carried ships must be able to access it.

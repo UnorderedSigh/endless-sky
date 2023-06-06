@@ -376,7 +376,7 @@ void MapPanel::DrawMiniMap(const PlayerInfo &player, float alpha, const System *
 		const System &system = *jump[i];
 		const Government *gov = system.GetGovernment();
 		Point from = system.Position() - center + drawPos;
-		const string &name = player.KnowsName(system) ? system.Name() : UNKNOWN_SYSTEM;
+		const string &name = player.KnowsName(system) ? system.DisplayName() : UNKNOWN_SYSTEM;
 		font.Draw(name, from + Point(OUTER, -.5 * font.Height()), lineColor);
 
 		// Draw the origin and destination systems, since they
@@ -764,7 +764,8 @@ void MapPanel::Find(const string &name)
 		const System &system = it.second;
 		if(system.IsValid() && !system.Inaccessible() && player.HasVisited(system))
 		{
-			int index = Search(it.first, name);
+			const string &toSearch = it.second.DisplayName().empty() ? it.first : it.second.DisplayName();
+			int index = Search(toSearch, name);
 			if(index >= 0 && index < bestIndex)
 			{
 				bestIndex = index;
@@ -963,7 +964,7 @@ void MapPanel::UpdateCache()
 		}
 
 		nodes.emplace_back(system.Position(), color,
-			player.KnowsName(system) ? system.Name() : "",
+			player.KnowsName(system) ? system.DisplayName() : "",
 			(&system == &playerSystem) ? closeNameColor : farNameColor,
 			player.HasVisited(system) ? system.GetGovernment() : nullptr);
 	}

@@ -381,7 +381,7 @@ void AI::IssueMoveTarget(const PlayerInfo &player, const Point &target, const Sy
 	newOrders.point = target;
 	newOrders.targetSystem = moveToSystem;
 	string description = "moving to the given location";
-	description += player.GetSystem() == moveToSystem ? "." : (" in the " + moveToSystem->Name() + " system.");
+	description += player.GetSystem() == moveToSystem ? "." : (" in the " + moveToSystem->DisplayName() + " system.");
 	IssueOrders(player, newOrders, description);
 }
 
@@ -4010,13 +4010,13 @@ void AI::MovePlayer(Ship &ship, const PlayerInfo &player, Command &activeCommand
 		{
 			// The player is guaranteed to have a travel plan for isWormhole to be true.
 			Messages::Add("Landing on a local wormhole to navigate to the "
-					+ player.TravelPlan().back()->Name() + " system.", Messages::Importance::High);
+					+ player.TravelPlan().back()->DisplayName() + " system.", Messages::Importance::High);
 		}
 		if(ship.GetTargetSystem() && !isWormhole)
 		{
 			string name = "selected star";
 			if(player.KnowsName(*ship.GetTargetSystem()))
-				name = ship.GetTargetSystem()->Name();
+				name = ship.GetTargetSystem()->DisplayName();
 
 			if(activeCommands.Has(Command::FLEET_JUMP))
 				Messages::Add("Engaging fleet autopilot to jump to the " + name + " system."

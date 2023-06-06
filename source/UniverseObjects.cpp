@@ -61,11 +61,29 @@ namespace {
 
 		return true;
 	}
+	// Class objects with a deferred definition should still get named when content is loaded.
+	template <class Type>
+	bool DisplayNameIfDeferred(const set<string> &deferred, pair<const string, Type> &it)
+	{
+		if(deferred.count(it.first))
+			it.second.SetDisplayName(it.first);
+		else
+			return false;
+
+		return true;
+	}
 	// Set the name of an "undefined" class object, so that it can be written to the player's save.
 	template <class Type>
 	void NameAndWarn(const string &noun, pair<const string, Type> &it)
 	{
 		it.second.SetName(it.first);
+		Warn(noun, it.first);
+	}
+	// Set the name of an "undefined" class object, so that it can be written to the player's save.
+	template <class Type>
+	void DisplayNameAndWarn(const string &noun, pair<const string, Type> &it)
+	{
+		it.second.SetDisplayName(it.first);
 		Warn(noun, it.first);
 	}
 }
@@ -209,8 +227,8 @@ void UniverseObjects::UpdateSystems()
 {
 	for(auto &it : systems)
 	{
-		// Skip systems that have no name.
-		if(it.first.empty() || it.second.Name().empty())
+		// Skip systems that have no true name.
+		if(it.first.empty() || it.second.TrueName().empty())
 			continue;
 		it.second.UpdateSystem(systems, neighborDistances);
 
@@ -310,8 +328,8 @@ void UniverseObjects::CheckReferences()
 			Logger::LogError("Warning: shipyard \"" + it.first + "\" is referred to, but has no ships.");
 	// System names are used by a number of classes.
 	for(auto &&it : systems)
-		if(it.second.Name().empty() && !NameIfDeferred(deferred["system"], it))
-			NameAndWarn("system", it);
+		if(it.second.TrueName().empty() && !DisplayNameIfDeferred(deferred["system"], it))
+			DisplayNameAndWarn("system", it);
 	// Hazards are never serialized.
 	for(const auto &it : hazards)
 		if(!it.second.IsValid())
