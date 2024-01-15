@@ -14,7 +14,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "Mortgage.h"
-
+#include "Format.h"
 #include "DataNode.h"
 #include "DataWriter.h"
 
@@ -46,13 +46,15 @@ int64_t Mortgage::Maximum(int64_t annualRevenue, int creditScore, double current
 
 
 // Create a new mortgage of the given amount.
-Mortgage::Mortgage(int64_t principal, int creditScore, int term)
-	: type(creditScore <= 0 ? "Fine" : "Mortgage"),
+Mortgage::Mortgage(int64_t principal, int creditScore, int term, const string &requestedType)
+	: type(requestedType),
 	principal(principal),
-	interest((600 - creditScore / 2) * .00001),
-	interestString("0." + to_string(600 - creditScore / 2) + "%"),
+	interest((600 - creditScore / 2) / * 0.00001),
 	term(term)
 {
+	if(type.empty())
+		type = creditScore <= 0 ? "Fine" : "Mortgage";
+	interestString = Format::Decimal(interest * 100, 3) + "%";
 }
 
 
@@ -80,8 +82,7 @@ void Mortgage::Load(const DataNode &node)
 		else if(child.Token(0) == "interest" && child.Size() >= 2)
 		{
 			interest = child.Value(1);
-			int f = 100000. * interest;
-			interestString = "0." + to_string(f) + "%";
+			interestString = Format::Decimal(interest * 100, 3) + "%";
 		}
 		else if(child.Token(0) == "term" && child.Size() >= 2)
 			term = max(1., child.Value(1));

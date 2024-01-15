@@ -387,6 +387,28 @@ void Account::AddFine(int64_t amount)
 
 
 
+// General debt addition, specifying all parameters
+void Account::AddDebt(int64_t amount, int term, double interest, const string &type)
+{
+	double localCreditScore = creditScore;
+	if(term <= 0)
+	{
+		if(type == "Mortgage")
+			term = 365;
+		else if(type == "Fine")
+			term = 60;
+		else
+			term = localCreditScore <= 0 ? 60 : 365;
+	}
+	if(interest > 0)
+		localCreditScore = 2 * (600 - interest * 100000);
+	else if(type != "Mortgage")
+		localCreditScore = 0;
+	mortgages.emplace_back(amount, localCreditScore, term, type);
+}
+
+
+
 // Check how big a mortgage the player can afford to pay at their current income.
 int64_t Account::Prequalify() const
 {

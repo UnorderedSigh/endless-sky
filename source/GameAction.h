@@ -87,6 +87,11 @@ private:
 	int64_t paymentMultiplier = 0;
 	int64_t fine = 0;
 
+	int64_t debt = 0;
+	int64_t debtTerm = -1;
+	double debtInterest = -1;
+	std::string debtType;
+
 	// When this action is performed, the missions with these names fail.
 	std::set<std::string> fail;
 	// When this action is performed, the mission that called this action is failed.

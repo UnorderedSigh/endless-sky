@@ -190,6 +190,59 @@ void GameAction::LoadSingle(const DataNode &child)
 			swap(minDays, maxDays);
 		events[GameData::Events().Get(child.Token(1))] = make_pair(minDays, maxDays);
 	}
+	else if(key == "debt")
+	{
+		if(child.Size() < 2)
+		{
+			child.PrintTrace("Skipping incomplete \"debt\":");
+			continue;
+		}
+		if(child.Size() > 2)
+			child.PrintTrace("Too many arguments to debt; expected 1:");
+		debt = child.Value(1);
+		debtTerm = 60;
+		debtInterest = -1;
+		debtType = "";
+		for(const DataNode &grand : child)
+		{
+			if(grand.Size() < 2)
+			{
+				grand.PrintTrace("Skipping incomplete debt attribute:");
+				continue;
+			}
+			if(grand.Size() > 2)
+				grand.PrintTrace("Debt attributes must have 1 value:");
+			if(grand.Token(0) == "interest rate")
+			{
+				debtInterest = grand.Value(1) / 100.0;
+				if(debtInterest < 0)
+				{
+					grand.PrintTrace("Debt interest must be 0% or higher.");
+					continue;
+				}
+			}
+			else if(grand.Token(0) == "term")
+			{
+				debtTerm = grand.Value(1);
+				if(debtTerm < 1)
+				{
+					grand.PrintTrace("Debt terms must be 1 or more days");
+					continue;
+				}
+			}
+			else if(grand.Token(0) == "type")
+			{
+				if(grand.Token(1) == "mortgage")
+					debtType = "mortgage";
+				else if(grand.Token(1) == "fine")
+					debtType = "fine";
+				else
+					grand.PrintTrace("Skipping unrecognized debt type:");
+			}
+			else
+				grand.PrintTrace("Skipping unrecognized debt attribute:");
+		}
+	}
 	else if(key == "fail" && child.Size() >= 2)
 		fail.insert(child.Token(1));
 	else if(key == "fail")
@@ -349,7 +402,8 @@ void GameAction::Do(PlayerInfo &player, UI *ui, const Mission *caller) const
 	}
 	if(fine)
 		player.Accounts().AddFine(fine);
-
+	if(debt > 0)
+		player.Accounts().AddDebt(debt, debtTerm, debtInterest, debtType);
 	for(const auto &it : events)
 		player.AddEvent(*it.first, player.GetDate() + it.second.first);
 
@@ -389,6 +443,15 @@ GameAction GameAction::Instantiate(map<string, string> &subs, int jumps, int pay
 	result.giftOutfits = giftOutfits;
 
 	result.payment = payment + (jumps + 1) * payload * paymentMultiplier;
+	if(debt > 0)
+	{
+		result.debt = debt;
+		subs["<debt>"] = Format::Credits(result.debt)
+			+ (result.debt == 1 ? " credit" : " credits");
+		result.debtTerm = debtTerm;
+		result.debtInterest = debtInterest;
+		result.debtType = debtType;
+	}
 	if(result.payment)
 		subs["<payment>"] = Format::CreditString(abs(result.payment));
 
